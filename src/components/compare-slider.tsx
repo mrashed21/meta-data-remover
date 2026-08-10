@@ -1,0 +1,166 @@
+"use client";
+
+import { useState, useCallback, useRef, useEffect } from "react";
+import { motion } from "motion/react";
+import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface CompareSliderProps {
+  originalSrc: string;
+  processedSrc: string;
+  className?: string;
+}
+
+export function CompareSlider({
+  originalSrc,
+  processedSrc,
+  className,
+}: CompareSliderProps) {
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMove = useCallback(
+    (clientX: number) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      setSliderPosition(percentage);
+    },
+    []
+  );
+
+  const handleMouseDown = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        handleMove(e.clientX);
+      }
+    },
+    [isDragging, handleMove]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (isDragging && e.touches.length > 0) {
+        handleMove(e.touches[0].clientX);
+      }
+    },
+    [isDragging, handleMove]
+  );
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setSliderPosition((prev) => Math.max(0, prev - 2));
+      } else if (e.key === "ArrowRight") {
+        setSliderPosition((prev) => Math.min(100, prev + 2));
+      }
+    },
+    []
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className={cn("relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900", className)}
+    >
+      <div
+        ref={containerRef}
+        className="relative aspect-video cursor-col-resize select-none"
+        onMouseDown={(e) => {
+          handleMouseDown();
+          handleMove(e.clientX);
+        }}
+        onTouchStart={(e) => {
+          handleMouseDown();
+          if (e.touches.length > 0) handleMove(e.touches[0].clientX);
+        }}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="slider"
+        aria-label="Compare before and after"
+        aria-valuenow={Math.round(sliderPosition)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        {/* Processed (bottom layer - full) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={processedSrc}
+          alt="Processed"
+          className="absolute inset-0 w-full h-full object-contain"
+          draggable={false}
+        />
+
+        {/* Original (top layer - clipped) */}
+        <div
+          className="absolute inset-0 overflow-hidden"
+          style={{ width: `${sliderPosition}%` }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={originalSrc}
+            alt="Original"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{
+              width: containerRef.current
+                ? `${containerRef.current.offsetWidth}px`
+                : "100%",
+              maxWidth: "none",
+            }}
+            draggable={false}
+          />
+        </div>
+
+        {/* Slider line */}
+        <div
+          className="absolute top-0 bottom-0 w-0.5 bg-white/80 shadow-lg z-10"
+          style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
+        >
+          {/* Handle */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-xl flex items-center justify-center cursor-grab active:cursor-grabbing">
+            <GripVertical className="w-4 h-4 text-zinc-700" />
+          </div>
+        </div>
+
+        {/* Labels */}
+        <div className="absolute top-3 left-3 z-20">
+          <span className="px-2 py-1 rounded-md bg-zinc-950/80 backdrop-blur-sm text-xs font-medium text-zinc-300 border border-zinc-700/50">
+            Original
+          </span>
+        </div>
+        <div className="absolute top-3 right-3 z-20">
+          <span className="px-2 py-1 rounded-md bg-zinc-950/80 backdrop-blur-sm text-xs font-medium text-emerald-400 border border-emerald-500/30">
+            Processed
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
