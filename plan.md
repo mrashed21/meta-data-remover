@@ -342,19 +342,19 @@ Image processing production-grade করা।
 
 ### Tasks
 
-* [ ] JPEG support
-* [ ] JPG support
-* [ ] PNG support
-* [ ] WebP support
-* [ ] GIF support
-* [ ] EXIF detection
-* [ ] EXIF removal
-* [ ] GPS removal
-* [ ] IPTC removal
-* [ ] XMP handling
-* [ ] Thumbnail metadata handling
-* [ ] Orientation preservation
-* [ ] Image dimension preservation
+* [x] JPEG support
+* [x] JPG support
+* [x] PNG support
+* [x] WebP support
+* [x] GIF support
+* [x] EXIF detection
+* [x] EXIF removal
+* [x] GPS removal
+* [x] IPTC removal
+* [x] XMP handling
+* [x] Thumbnail metadata handling
+* [x] Orientation preservation
+* [x] Image dimension preservation
 
 ### Critical Test
 
@@ -370,7 +370,9 @@ Output অবশ্যই:
 4032 × 3024
 ```
 
-হতে হবে।
+হতে হবে। ✅ PASSED — `sharp().rotate()` properly parses EXIF orientation first without swapping unrotated arrays, then `withMetadata()` is omitted to securely strip all EXIF/IPTC/XMP blocks.
+
+**Gate:** ✅ PASSED — npm run lint & build
 
 ---
 

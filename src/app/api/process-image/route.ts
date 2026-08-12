@@ -55,12 +55,20 @@ export async function POST(request: NextRequest) {
     // Get original image metadata for response headers
     const originalMeta = await sharp(inputBuffer).metadata();
 
-    // Start sharp pipeline — strip all metadata
-    let pipeline = sharp(inputBuffer, { failOn: "none" });
+    // Start sharp pipeline — strip all metadata by NOT calling withMetadata()
+    // Calling rotate() without arguments auto-rotates the image based on EXIF orientation 
+    // so the visual orientation is preserved while the EXIF tag is stripped.
+    let pipeline = sharp(inputBuffer, { failOn: "none" }).rotate();
 
     // 1. Apply user crop OR micro-crop
     let currentWidth = originalMeta.width || 0;
     let currentHeight = originalMeta.height || 0;
+
+    // Adjust dimensions if EXIF orientation swaps width and height
+    if (originalMeta.orientation && originalMeta.orientation >= 5) {
+      currentWidth = originalMeta.height || 0;
+      currentHeight = originalMeta.width || 0;
+    }
 
     if (cropW !== null && cropH !== null && cropX !== null && cropY !== null) {
       pipeline = pipeline.extract({
@@ -94,6 +102,7 @@ export async function POST(request: NextRequest) {
         width: resizeW || undefined,
         height: resizeH || undefined,
         fit: resizeMaintainAspect && resizeW && resizeH ? "inside" : (resizeW && resizeH ? "fill" : "inside"),
+        withoutEnlargement: true, // Crucial: Never accidentally upscale
       });
       if (resizeW) currentWidth = resizeW;
       if (resizeH) currentHeight = resizeH;
@@ -142,16 +151,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. Convert to target format and strip metadata
+    // 4. Convert to target format and STRICTLY STRIP METADATA
     let outputBuffer: Buffer;
     const formatMap = {
-      jpeg: () => pipeline.jpeg({ quality, mozjpeg: true }).withMetadata({}),
-      png: () => pipeline.png({ quality: Math.round(quality), compressionLevel: 9 }).withMetadata({}),
-      webp: () => pipeline.webp({ quality }).withMetadata({}),
+      jpeg: () => pipeline.jpeg({ quality, mozjpeg: true }), // NO withMetadata()
+      jpg: () => pipeline.jpeg({ quality, mozjpeg: true }),
+      png: () => pipeline.png({ quality: Math.round(quality), compressionLevel: 9 }),
+      webp: () => pipeline.webp({ quality }),
+      gif: () => pipeline.gif(),
     };
 
-    // Use withMetadata with empty object to strip all EXIF/IPTC/XMP
-    // but still produce valid output
     const formatter = formatMap[format as keyof typeof formatMap];
     if (!formatter) {
       return NextResponse.json(
@@ -165,14 +174,18 @@ export async function POST(request: NextRequest) {
     // Build response
     const mimeMap: Record<string, string> = {
       jpeg: "image/jpeg",
+      jpg: "image/jpeg",
       png: "image/png",
       webp: "image/webp",
+      gif: "image/gif",
     };
 
     const extMap: Record<string, string> = {
       jpeg: "jpg",
+      jpg: "jpg",
       png: "png",
       webp: "webp",
+      gif: "gif",
     };
 
     const outputFilename = file.name.replace(
