@@ -310,27 +310,27 @@ duplicate file ✅
 প্রতিটি file card-এ:
 
 ```text
-Filename
-File Type
-File Size
-Processing Status
-Progress
-Metadata Status
-Remove
+Filename ✅
+File Type ✅
+File Size ✅
+Processing Status ✅
+Progress ✅
+Metadata Status ✅
+Remove ✅
 ```
 
 Status:
 
 ```text
-Waiting
-Processing
-Completed
-Failed
+Waiting ✅
+Processing ✅
+Completed ✅
+Failed ✅
 ```
 
 ### Test
 
-একসাথে 10+ file দিয়ে queue test।
+একসাথে 10+ file দিয়ে queue test। ✅ PASSED — npm run lint & build
 
 ---
 

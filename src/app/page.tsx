@@ -10,7 +10,7 @@ import { UniversalUploader } from "@/components/universal-uploader";
 import { ControlPanel } from "@/components/control-panel";
 import { MetadataInspector } from "@/components/metadata-inspector";
 import { CompareSlider } from "@/components/compare-slider";
-import { BatchProgress } from "@/components/batch-progress";
+import { FileQueue } from "@/components/file-queue";
 import { ShareButton } from "@/components/share-button";
 import { LivePreviewEditor } from "@/components/live-preview-editor";
 import { Badge } from "@/components/ui/badge";
@@ -515,14 +515,14 @@ export default function Home() {
               />
             </motion.div>
 
-            {/* Batch Progress */}
-            <BatchProgress
-              files={files}
+            {/* File Queue */}
+            <FileQueue
+              files={files as any}
+              onRemove={handleFileRemove}
+              onClearAll={handleClearAll}
+              onInspect={handleInspect}
               onDownload={handleDownload}
               onDownloadAll={handleDownloadAll}
-              onInspect={handleInspect}
-              onCompare={handleCompare}
-              onRename={handleRename}
               isZipping={isZipping}
             />
 
