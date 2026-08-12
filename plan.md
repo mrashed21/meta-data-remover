@@ -160,7 +160,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] File validation utility
 * [x] Error handling strategy
 * [x] Processing status model
-* [ ] Download utility
+* [x] Download utility
 * [ ] Filename generator
 * [ ] Metadata configuration
 * [ ] Environment variables cleanup
