@@ -156,7 +156,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 ### Tasks
 
 * [x] Processing architecture define
-* [ ] Shared types create
+* [x] Shared types create
 * [ ] File validation utility
 * [ ] Error handling strategy
 * [ ] Processing status model
