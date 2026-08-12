@@ -17,55 +17,30 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // ─── Default — white/dark filled (shadcn default) ───────────────────
+        // ─── Default — Premium CTA ──────────────────────────────────────────────
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
-
-        // ─── Brand — violet filled, primary CTA ─────────────────────────────
-        brand: [
-          "bg-[oklch(0.55_0.27_293)] text-white",
-          "shadow-[0_2px_12px_oklch(0.55_0.27_293/0.35)]",
-          "hover:bg-[oklch(0.60_0.27_293)]",
-          "hover:shadow-[0_4px_20px_oklch(0.55_0.27_293/0.45)]",
-        ],
-
-        // ─── Brand gradient — violet→fuchsia, premium CTA ───────────────────
-        gradient: [
-          "bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white",
-          "shadow-[0_2px_16px_oklch(0.55_0.27_293/0.35)]",
-          "hover:from-violet-500 hover:to-fuchsia-500",
-          "hover:shadow-[0_4px_24px_oklch(0.55_0.27_293/0.50)]",
-        ],
-
-        // ─── Brand outline — violet border, transparent ─────────────────────
-        "brand-outline": [
-          "border border-[oklch(0.55_0.27_293/0.5)] bg-transparent",
-          "text-[oklch(0.75_0.18_293)]",
-          "hover:bg-[oklch(0.55_0.27_293/0.1)]",
-          "hover:border-[oklch(0.55_0.27_293/0.8)]",
-        ],
+          "bg-primary text-primary-foreground hover:bg-[#D8B894]",
 
         // ─── Success — emerald filled ────────────────────────────────────────
         success: [
-          "bg-[oklch(0.62_0.17_162)] text-white",
-          "shadow-[0_2px_12px_oklch(0.62_0.17_162/0.30)]",
-          "hover:bg-[oklch(0.67_0.17_162)]",
-          "hover:shadow-[0_4px_20px_oklch(0.62_0.17_162/0.40)]",
+          "bg-success text-white",
+          "shadow-[0_2px_12px_rgba(163,230,53,0.15)]",
+          "hover:bg-[#86d628]",
         ],
 
         // ─── Destructive ─────────────────────────────────────────────────────
         destructive:
-          "bg-destructive text-white shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 
-        // ─── Secondary — zinc-800 surface ────────────────────────────────────
+        // ─── Secondary ───────────────────────────────────────────────────────
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+          "bg-transparent border border-border text-foreground hover:bg-[#141414]",
 
-        // ─── Outline — zinc border, transparent ─────────────────────────────
+        // ─── Outline — transparent ──────────────────────────────────────────
         outline: [
           "border border-border bg-transparent",
-          "text-foreground/80",
-          "hover:bg-muted hover:text-foreground",
+          "text-foreground",
+          "hover:bg-[#141414] hover:text-foreground",
         ],
 
         // ─── Ghost — no border, subtle hover ────────────────────────────────

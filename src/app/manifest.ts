@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'mrashed21 Media Processor',
-    short_name: 'MediaProcessor',
+    name: 'ZeroMeta',
+    short_name: 'ZeroMeta',
     description: 'Remove EXIF metadata, GPS location, and watermarks.',
     start_url: '/',
     display: 'standalone',

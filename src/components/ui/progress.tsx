@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 // =============================================================================
 
 const progressTrackVariants = cva(
-  "relative w-full overflow-hidden rounded-full bg-muted",
+  "relative w-full overflow-hidden rounded-full bg-[#1C1C1C]",
   {
     variants: {
       size: {
@@ -33,8 +33,8 @@ const progressIndicatorVariants = cva(
   {
     variants: {
       colorScheme: {
-        brand:   "bg-gradient-to-r from-violet-500 to-fuchsia-500 shadow-[0_0_8px_oklch(0.55_0.27_293/0.40)]",
-        success: "bg-gradient-to-r from-emerald-500 to-teal-500 shadow-[0_0_8px_oklch(0.62_0.17_162/0.35)]",
+        brand:   "bg-primary shadow-[0_0_8px_rgba(228,199,170,0.30)]",
+        success: "bg-[#A3E635] shadow-[0_0_8px_rgba(163,230,53,0.35)]",
         danger:  "bg-gradient-to-r from-red-500 to-orange-500",
         warning: "bg-gradient-to-r from-amber-400 to-yellow-500",
         neutral: "bg-gradient-to-r from-zinc-400 to-zinc-300",

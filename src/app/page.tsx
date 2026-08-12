@@ -3,7 +3,9 @@
 import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import JSZip from "jszip";
-import { Sparkles, ArrowDown, Shield, Zap, BrainCircuit } from "lucide-react";
+import { Sparkles, ArrowDown, Shield, Zap, BrainCircuit, Image as ImageIcon, Video, Music } from "lucide-react";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Header } from "@/components/header";
 import { UniversalUploader } from "@/components/universal-uploader";
@@ -37,6 +39,9 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isZipping, setIsZipping] = useState(false);
   const [editingImageId, setEditingImageId] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<"image" | "video" | "audio">("image");
+  const filteredFiles = files.filter(f => f.mediaType === activeTab);
 
   // Inspector state
   const [inspectorOpen, setInspectorOpen] = useState(false);
@@ -86,13 +91,14 @@ export default function Home() {
 
   const handleClearAll = useCallback(() => {
     setFiles((prev) => {
-      prev.forEach((file) => {
+      const remaining = prev.filter(f => f.mediaType !== activeTab);
+      prev.filter(f => f.mediaType === activeTab).forEach((file) => {
         URL.revokeObjectURL(file.preview);
         if (file.processedPreview) URL.revokeObjectURL(file.processedPreview);
       });
-      return [];
+      return remaining;
     });
-  }, []);
+  }, [activeTab]);
 
   const handleFileEdit = useCallback((id: string) => {
     setEditingImageId(id);
@@ -112,10 +118,10 @@ export default function Home() {
     );
   }, []);
 
-  // Process all files
+  // Process all files in current tab
   const handleProcess = useCallback(async () => {
     const filesToProcess = files.filter(
-      (f) => f.status === "queued" || f.status === "error"
+      (f) => (f.status === "queued" || f.status === "error") && f.mediaType === activeTab
     );
     if (filesToProcess.length === 0) return;
 
@@ -351,7 +357,7 @@ export default function Home() {
     }
 
     setIsProcessing(false);
-  }, [files, options]);
+  }, [files, options, activeTab]);
 
   // Cancel processing
   const handleCancel = useCallback(() => {
@@ -385,17 +391,17 @@ export default function Home() {
 
   // Download all as ZIP
   const handleDownloadAll = useCallback(async () => {
-    const completedFiles = files.filter(
-      (f) => f.status === "done" && f.processedBlob
+    const processedFiles = files.filter(
+      (f) => f.status === "done" && f.processedBlob && f.mediaType === activeTab
     );
-    if (completedFiles.length === 0) return;
+    if (processedFiles.length === 0) return;
 
     setIsZipping(true);
     try {
       const zip = new JSZip();
       const ext = options.format === "jpeg" ? "jpg" : options.format;
 
-      for (const file of completedFiles) {
+      for (const file of processedFiles) {
         if (file.processedBlob) {
           let outputName = file.customName || file.file.name.replace(
             /\.[^.]+$/,
@@ -406,20 +412,16 @@ export default function Home() {
         }
       }
 
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(zipBlob);
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      
-      // Use Sprint 11 compliant prefix for zip
-      const timeStr = new Date().toISOString().replace(/T/, '-').replace(/[:.]/g, '').slice(0, 15);
-      a.download = `mrashed21-batch-${timeStr}.zip`;
+      a.download = `ZeroMeta-${activeTab}-processed.zip`;
       
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       
-      // Delay cleanup to ensure browser completes download initialization
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (err) {
       console.error("ZIP creation failed:", err);
@@ -427,7 +429,7 @@ export default function Home() {
     } finally {
       setIsZipping(false);
     }
-  }, [files, options.format]);
+  }, [files, options.format, activeTab]);
 
   // Open metadata inspector for a file
   const handleInspect = useCallback(
@@ -452,14 +454,18 @@ export default function Home() {
     [files]
   );
 
-  const completedFiles = files.filter((f) => f.status === "done");
-  const firstCompleted = completedFiles[0];
+  // Compute derived state for the current tab
+  const processingCount = filteredFiles.filter((f) => f.status === "processing").length;
+  const queuedCount = filteredFiles.filter((f) => f.status === "queued").length;
+  const doneCount = filteredFiles.filter((f) => f.status === "done").length;
+  const errorCount = filteredFiles.filter((f) => f.status === "error").length;
+  const firstCompleted = filteredFiles.find((f) => f.status === "done");
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pt-24 md:pt-28 md:pb-10 w-full flex flex-col gap-4 lg:gap-8">
         {/* Hero section when no files */}
         <AnimatePresence>
           {files.length === 0 && (
@@ -468,7 +474,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-center text-center section-y mb-4"
+              className="flex flex-col items-center text-center py-12 md:py-20 hero-glow mb-4 rounded-3xl"
             >
               {/* Privacy Statement / Overline */}
               <motion.div
@@ -494,10 +500,10 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-display max-w-4xl mb-6"
+                className="text-5xl md:text-7xl font-bold max-w-4xl mb-6 tracking-tight"
               >
                 Strip Metadata. <br className="sm:hidden" />
-                <span className="gradient-text">Protect Your Privacy.</span>
+                <span className="text-gradient-cyan">Protect Your Privacy.</span>
               </motion.h2>
 
               {/* Hero Description */}
@@ -505,7 +511,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-body-lg max-w-2xl text-muted-foreground mb-10"
+                className="text-lg md:text-xl max-w-2xl text-muted-foreground mb-10 leading-relaxed"
               >
                 Remove hidden EXIF data, GPS locations, C2PA manifests, and AI tracking watermarks from your media. Fast, secure, and entirely browser-based.
               </motion.p>
@@ -524,10 +530,10 @@ export default function Home() {
                 ].map((feature, i) => (
                   <div
                     key={feature.label}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl surface shadow-sm"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[oklch(0.55_0.27_293/0.1)] flex items-center justify-center">
-                      <feature.icon className="w-4 h-4 text-[oklch(0.75_0.18_293)]" />
+                    <div className="w-8 h-8 rounded-lg bg-[rgba(0,200,255,0.1)] flex items-center justify-center">
+                      <feature.icon className="w-4 h-4 text-brand" />
                     </div>
                     <span className="text-sm font-medium text-foreground">{feature.label}</span>
                   </div>
@@ -548,109 +554,127 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Landing Sections (Marketing / SEO) */}
-        {files.length === 0 && <LandingSections />}
-
         {/* Main layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Upload + Batch Progress + Compare */}
-          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <UniversalUploader
-                files={files as any} // Cast temporarily until full pipeline migration in Sprint 05/06
-                onFilesAdded={handleFilesAdded}
-                onFileRemove={handleFileRemove}
-                onClearAll={handleClearAll}
-                onFileEdit={handleFileEdit}
-                disabled={isProcessing}
-              />
-            </motion.div>
+        <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full space-y-6">
+          <TabsList className="w-full sm:w-auto h-12 bg-card/80 backdrop-blur-md border border-border/50 flex p-1 rounded-xl">
+            <TabsTrigger value="image" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
+              <ImageIcon className="w-4 h-4" /> <span className="hidden sm:inline">Images</span>
+            </TabsTrigger>
+            <TabsTrigger value="video" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
+              <Video className="w-4 h-4" /> <span className="hidden sm:inline">Videos</span>
+            </TabsTrigger>
+            <TabsTrigger value="audio" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
+              <Music className="w-4 h-4" /> <span className="hidden sm:inline">Audio</span>
+            </TabsTrigger>
+          </TabsList>
 
-            {/* File Queue */}
-            <FileQueue
-              files={files as any}
-              onRemove={handleFileRemove}
-              onClearAll={handleClearAll}
-              onInspect={handleInspect}
-              onDownload={handleDownload}
-              onDownloadAll={handleDownloadAll}
-              isZipping={isZipping}
-            />
-
-            {/* Compare Slider */}
-            <AnimatePresence>
-              {(compareFile || firstCompleted) && (
+          <TabsContent value={activeTab} className="mt-0 outline-none">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+              {/* Left Column: Upload + Batch Progress + Compare */}
+              <div className="lg:col-span-7 xl:col-span-8 space-y-6">
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-zinc-300">
-                      Before / After Comparison
-                    </h3>
-                    {(compareFile || firstCompleted)?.processedBlob && (
-                      <ShareButton
-                        blob={(compareFile || firstCompleted)!.processedBlob!}
-                        fileName={
-                          (compareFile || firstCompleted)!.file.name.replace(
-                            /\.[^.]+$/,
-                            `_cleaned.${options.format === "jpeg" ? "jpg" : options.format}`
-                          )
-                        }
-                      />
-                    )}
-                  </div>
-                  <CompareSlider
-                    originalSrc={
-                      (compareFile || firstCompleted)!.preview
-                    }
-                    processedSrc={
-                      (compareFile || firstCompleted)!.processedPreview!
-                    }
+                  <UniversalUploader
+                    files={filteredFiles as any}
+                    allowedType={activeTab}
+                    onFilesAdded={handleFilesAdded}
+                    onFileRemove={handleFileRemove}
+                    onClearAll={handleClearAll}
+                    onFileEdit={handleFileEdit}
+                    disabled={isProcessing}
                   />
                 </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
-          {/* Right Column: Control Panel */}
-          <div className="lg:col-span-5 xl:col-span-4">
-            <div className="lg:sticky lg:top-20">
-              <ControlPanel
-                options={options}
-                onOptionsChange={setOptions}
-                onProcess={handleProcess}
-                onCancel={handleCancel}
-                isProcessing={isProcessing}
-                fileCount={
-                  files.filter(
-                    (f) => f.status === "queued" || f.status === "error"
-                  ).length
-                }
-              />
+                {/* File Queue */}
+                <FileQueue
+                  files={filteredFiles as any}
+                  onRemove={handleFileRemove}
+                  onClearAll={handleClearAll}
+                  onInspect={handleInspect}
+                  onDownload={handleDownload}
+                  onDownloadAll={handleDownloadAll}
+                  isZipping={isZipping}
+                />
+
+                {/* Compare Slider */}
+                <AnimatePresence>
+                  {(compareFile || firstCompleted)?.processedPreview && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-medium text-zinc-300">
+                          Before / After Comparison
+                        </h3>
+                        {(compareFile || firstCompleted)?.processedBlob && (
+                          <ShareButton
+                            blob={(compareFile || firstCompleted)!.processedBlob!}
+                            fileName={
+                              (compareFile || firstCompleted)!.file.name.replace(
+                                /\.[^.]+$/,
+                                `_cleaned.${options.format === "jpeg" ? "jpg" : options.format}`
+                              )
+                            }
+                          />
+                        )}
+                      </div>
+                      <CompareSlider
+                        originalSrc={
+                          (compareFile || firstCompleted)!.preview
+                        }
+                        processedSrc={
+                          (compareFile || firstCompleted)!.processedPreview!
+                        }
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Right Column: Control Panel */}
+              <div className="lg:col-span-5 xl:col-span-4">
+                <div className="lg:sticky lg:top-24">
+                  <ControlPanel
+                    options={options}
+                    onOptionsChange={setOptions}
+                    onProcess={handleProcess}
+                    onCancel={handleCancel}
+                    isProcessing={isProcessing}
+                    activeTab={activeTab}
+                    fileCount={
+                      filteredFiles.filter(
+                        (f) => f.status === "queued" || f.status === "error"
+                      ).length
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* Landing Sections (Marketing / SEO) */}
+        {files.length === 0 && <LandingSections />}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800/50 py-6 mt-auto">
+      <footer className="border-t border-border py-6 mt-auto mobile-nav-safe-space md:pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-xs text-zinc-500">
-              © {new Date().getFullYear()} mrashed21 Media Processor. &quot;Privacy Clean&quot; mode processes files entirely in your browser. &quot;Clean + Branding&quot; securely injects EXIF on our stateless edge servers. No files are retained.
+            <p className="text-xs text-muted-foreground font-medium">
+              © {new Date().getFullYear()} ZeroMeta. &quot;Privacy Clean&quot; mode processes files entirely in your browser. &quot;Clean + Branding&quot; securely injects EXIF on our stateless edge servers. No files are retained.
             </p>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="text-[10px]">
+              <Badge className="badge-neutral text-[10px]">
                 PWA Ready
               </Badge>
-              <Badge variant="outline" className="text-[10px]">
+              <Badge className="badge-neutral text-[10px]">
                 No Data Stored
               </Badge>
             </div>

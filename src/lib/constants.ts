@@ -167,9 +167,9 @@ export const BREAKPOINTS = {
 
 /**
  * Page title template. Interpolate with the page name:
- *   `My Page | ${TITLE_TEMPLATE}` → "My Page | mrashed21 Media Processor"
+ *   `My Page | ${TITLE_TEMPLATE}` → "My Page | ZeroMeta"
  */
-export const TITLE_TEMPLATE = "mrashed21 Media Processor";
+export const TITLE_TEMPLATE = "ZeroMeta";
 
 /**
  * Shared accessible aria-labels for common actions.

@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://mrashed21.com/sitemap.xml',
+    sitemap: 'https://mrashed21.me/sitemap.xml',
   }
 }

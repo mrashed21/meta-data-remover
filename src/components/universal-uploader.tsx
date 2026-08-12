@@ -19,6 +19,7 @@ interface UniversalUploaderProps {
   onClearAll: () => void;
   onFileEdit?: (id: string) => void;
   disabled?: boolean;
+  allowedType?: "image" | "video" | "audio";
 }
 
 export function UniversalUploader({
@@ -28,6 +29,7 @@ export function UniversalUploader({
   onClearAll,
   onFileEdit,
   disabled = false,
+  allowedType = "image",
 }: UniversalUploaderProps) {
   const { toast } = useToast();
 
@@ -71,14 +73,16 @@ export function UniversalUploader({
     [files, onFilesAdded, toast]
   );
 
-  // Construct accept object for react-dropzone from our registry
-  const acceptRegistry = ALL_SUPPORTED_TYPES.reduce((acc, curr) => {
-    if (!acc[curr.mime]) {
-      acc[curr.mime] = [];
-    }
-    acc[curr.mime].push(...curr.extensions);
-    return acc;
-  }, {} as Record<string, string[]>);
+  // Construct accept object for react-dropzone from our registry based on allowedType
+  const acceptRegistry = ALL_SUPPORTED_TYPES
+    .filter(type => type.mediaType === allowedType)
+    .reduce((acc, curr) => {
+      if (!acc[curr.mime]) {
+        acc[curr.mime] = [];
+      }
+      acc[curr.mime].push(...curr.extensions);
+      return acc;
+    }, {} as Record<string, string[]>);
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, open } =
     useDropzone({
@@ -99,24 +103,24 @@ export function UniversalUploader({
         <div
           {...getRootProps()}
           className={cn(
-            "relative rounded-2xl border-2 border-dashed transition-all duration-300 group overflow-hidden",
-            files.length === 0 ? "p-8 sm:p-16 text-center cursor-pointer" : "p-4 sm:p-6",
-            isDragActive && !isDragReject && "border-success bg-success/5 scale-[1.01]",
-            isDragReject && "border-destructive bg-destructive/10",
-            !isDragActive && !isDragReject && "border-border bg-card hover:border-zinc-500",
+            "relative transition-all duration-300 group overflow-hidden",
+            files.length === 0 ? "p-8 sm:p-16 text-center cursor-pointer" : "p-4 sm:p-6 rounded-2xl",
+            isDragActive && !isDragReject && "dropzone-active scale-[1.01]",
+            isDragReject && "border-destructive border-dashed bg-destructive/10 rounded-2xl",
+            !isDragActive && !isDragReject && "dropzone",
             disabled && "opacity-50 cursor-not-allowed"
           )}
         >
           <input {...getInputProps()} />
 
-          {/* Background glow effect */}
+          {/* Background effect */}
           <div
             className={cn(
               "absolute inset-0 opacity-0 transition-opacity duration-500",
               isDragActive && "opacity-100"
             )}
           >
-            <div className="absolute inset-0 bg-[oklch(0.55_0.27_293/0.05)]" />
+            <div className="absolute inset-0 bg-[rgba(228,199,170,0.02)]" />
           </div>
 
           <div className="relative z-10 flex flex-col items-center justify-center">
@@ -130,10 +134,10 @@ export function UniversalUploader({
                     exit={{ opacity: 0, scale: 0.8 }}
                     className="flex flex-col items-center gap-3"
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-success/20 flex items-center justify-center text-success shadow-lg shadow-success/20">
+                    <div className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-brand shadow-lg">
                       <ImagePlus className="w-8 h-8" />
                     </div>
-                    <p className="text-lg font-medium text-success">
+                    <p className="text-lg font-medium text-brand">
                       Drop to queue files
                     </p>
                   </motion.div>
@@ -174,7 +178,7 @@ export function UniversalUploader({
                     <p className="text-sm font-semibold text-foreground">
                       {isDragActive ? "Drop files here" : "Add more files"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#A1A1AA]">
                       Images (50MB), Videos (500MB), Audio (100MB)
                     </p>
                   </div>

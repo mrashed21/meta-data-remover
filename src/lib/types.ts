@@ -77,7 +77,7 @@ export type PrivacyMode = "privacy-clean" | "clean-branding";
 export interface BrandingConfig {
   creator: string;   // "Muhammad Rashed"
   author: string;    // "Muhammad Rashed"
-  software: string;  // "mrashed21 Media Processor"
+  software: string;  // "ZeroMeta"
   keywords: string[]; // ["mrashed21", "muhammad rashed"]
 }
 

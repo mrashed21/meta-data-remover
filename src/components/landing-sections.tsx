@@ -21,7 +21,7 @@ export function LandingSections() {
       {/* ─── HOW IT WORKS ─── */}
       <section className="space-y-10">
         <div className="text-center space-y-4">
-          <Badge variant="outline" className="px-3 py-1 text-primary border-primary/30 bg-primary/10">How It Works</Badge>
+          <Badge className="badge-brand">How It Works</Badge>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
             Strip metadata in 3 simple steps
           </h2>
@@ -43,11 +43,11 @@ export function LandingSections() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <Card className="bg-card/50 border-border/50 h-full">
+              <Card className="surface-hover h-full">
                 <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center relative">
                     <item.icon className="w-6 h-6 text-primary" />
-                    <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-background border flex items-center justify-center text-[10px] font-bold">
+                    <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-background border border-border flex items-center justify-center text-[10px] font-bold text-foreground">
                       {item.step}
                     </span>
                   </div>
@@ -80,9 +80,9 @@ export function LandingSections() {
               initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="flex gap-4 p-4 rounded-xl border bg-muted/20"
+              className="flex gap-4 p-4 surface-hover"
             >
-              <div className="w-10 h-10 rounded-lg bg-card border flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-background border flex items-center justify-center shrink-0">
                 <feature.icon className="w-5 h-5 text-muted-foreground" />
               </div>
               <div>
@@ -97,30 +97,30 @@ export function LandingSections() {
       {/* ─── PRIVACY ─── */}
       <section className="space-y-10">
         <div className="text-center space-y-4">
-          <Badge variant="outline" className="px-3 py-1 text-success border-success/30 bg-success/10">Privacy First</Badge>
+          <Badge className="badge-success">Privacy First</Badge>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
             Your data never leaves your device
           </h2>
         </div>
 
         <div className="grid sm:grid-cols-3 gap-6">
-          <Card className="bg-success/5 border-success/20">
+          <Card className="surface-hover">
             <CardContent className="p-6 space-y-3">
-              <Lock className="w-6 h-6 text-success" />
+              <Lock className="w-6 h-6 status-success" />
               <h3 className="font-medium">Client-Side Architecture</h3>
               <p className="text-sm text-muted-foreground">In Privacy Clean mode, all processing is performed locally in your browser using Canvas and WebAssembly. No files are uploaded.</p>
             </CardContent>
           </Card>
-          <Card className="bg-success/5 border-success/20">
+          <Card className="surface-hover">
             <CardContent className="p-6 space-y-3">
-              <Server className="w-6 h-6 text-success" />
+              <Server className="w-6 h-6 status-success" />
               <h3 className="font-medium">Stateless Edge Processing</h3>
               <p className="text-sm text-muted-foreground">When injecting custom branding, files are temporarily handled by stateless edge servers. Absolutely zero logs are kept.</p>
             </CardContent>
           </Card>
-          <Card className="bg-success/5 border-success/20">
+          <Card className="surface-hover">
             <CardContent className="p-6 space-y-3">
-              <Trash2 className="w-6 h-6 text-success" />
+              <Trash2 className="w-6 h-6 status-success" />
               <h3 className="font-medium">Instant Deletion</h3>
               <p className="text-sm text-muted-foreground">Any buffers utilized during processing are immediately wiped from memory. We do not retain, store, or analyze your media.</p>
             </CardContent>
@@ -143,12 +143,12 @@ export function LandingSections() {
               a: "Photos and videos capture hidden metadata including exact GPS coordinates, camera serial numbers, and device models. Removing this data protects your identity and exact physical location when sharing online."
             },
             {
-              q: "Does it reduce my image quality?",
-              a: "No. By default, mrashed21 Media Processor completely preserves your original dimensions and visual quality. You optionally select \"Optimize file size\" if you wish to apply compression."
+              q: "Does ZeroMeta compress my images?",
+              a: "No. By default, ZeroMeta completely preserves your original dimensions and visual quality. You optionally select \"Optimize file size\" if you wish to apply compression."
             },
             {
-              q: "Is there a file size limit?",
-              a: "Yes, the current batch processing engine safely supports files up to 50MB per file to prevent browser memory crashes during massive parallel tasks."
+              q: "Is it really free?",
+              a: "Yes. ZeroMeta is 100% free with no hidden limits. Our \"Privacy Clean\" mode runs entirely in your browser, costing us nothing in server fees, allowing us to keep it free."
             },
             {
               q: "How does Clean + Branding work?",
@@ -181,8 +181,11 @@ export function LandingSections() {
           <h2 className="text-3xl font-semibold tracking-tight text-foreground">
             Muhammad Rashed
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
+          <p className="text-muted-foreground max-w-lg mx-auto mb-4">
             Full Stack Developer building modern web applications, developer tools, and privacy-focused utilities from Bangladesh.
+          </p>
+          <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mx-auto mb-6">
+            ZeroMeta is built to give power back to the user. In an era where AI companies scrape the internet for training data and social networks track every EXIF coordinate, we provide a mathematically secure way to strip your files of hidden trackers.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-4">

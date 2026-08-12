@@ -37,26 +37,22 @@ interface FileCardProps {
 const statusConfig = {
   queued: {
     icon: Clock,
-    color: "text-muted-foreground",
-    bg: "bg-muted/30",
+    badgeClass: "badge-neutral",
     label: "Waiting",
   },
   processing: {
     icon: Loader2,
-    color: "text-brand",
-    bg: "bg-[oklch(0.55_0.27_293/0.05)]",
+    badgeClass: "badge-brand",
     label: "Processing",
   },
   done: {
     icon: CheckCircle2,
-    color: "text-success",
-    bg: "bg-success/10",
+    badgeClass: "badge-success",
     label: "Completed",
   },
   error: {
     icon: AlertCircle,
-    color: "text-destructive",
-    bg: "bg-destructive/10",
+    badgeClass: "badge-danger",
     label: "Failed",
   },
 };
@@ -82,11 +78,11 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
   const processedBlobExists = !!file.result?.blob || !!(file as any).processedBlob;
 
   return (
-    <div className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border border-border ${config.bg} transition-colors overflow-hidden group`}>
+    <div className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 file-card overflow-hidden group`}>
       {/* ─── Progress Bar (Background) ─── */}
       {isProcessing && (
         <div 
-          className="absolute inset-y-0 left-0 bg-brand/5 transition-all duration-300 ease-out z-0" 
+          className="absolute inset-y-0 left-0 bg-[rgba(0,200,255,0.05)] transition-all duration-300 ease-out z-0" 
           style={{ width: `${file.progress}%` }} 
         />
       )}
@@ -117,7 +113,7 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
               {isDone && processedSize && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-border" />
-                  <span className={`font-medium flex items-center gap-1 ${processedSize < file.file.size ? "text-success" : "text-amber-500"}`}>
+                  <span className={`font-medium flex items-center gap-1 ${processedSize < file.file.size ? "status-success" : "text-amber-500"}`}>
                     {formatFileSize(processedSize)}
                     <span className="text-[10px] ml-1">
                       ({processedSize < file.file.size ? "-" : "+"}
@@ -130,10 +126,7 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
           </div>
           
           {/* Status Badge */}
-          <Badge 
-            variant="outline" 
-            className={`shrink-0 gap-1.5 font-medium border-border bg-card/50 ${config.color}`}
-          >
+          <Badge className={`shrink-0 gap-1.5 ${config.badgeClass}`}>
             <StatusIcon className={`w-3.5 h-3.5 ${isProcessing ? "animate-spin" : ""}`} />
             {config.label}
           </Badge>
@@ -154,7 +147,7 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
               </span>
             ) : isDone ? (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-muted-foreground border-dashed bg-transparent">
+                <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-primary border-dashed bg-transparent border-primary/30">
                   Metadata: Stripped
                 </Badge>
               </div>
@@ -170,7 +163,7 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
                 <Button variant="outline" size="sm" onClick={() => onInspect(file.id)} className="gap-1.5 h-8 text-xs">
                   <FileText className="w-3.5 h-3.5" /> Inspect
                 </Button>
-                <Button size="sm" onClick={() => onDownload(file.id)} className="gap-1.5 h-8 text-xs bg-success text-success-foreground hover:bg-success/90">
+                <Button size="sm" onClick={() => onDownload(file.id)} className="gap-1.5 h-8 text-xs btn-primary shadow-sm">
                   <Download className="w-3.5 h-3.5" /> Save
                 </Button>
               </>
@@ -232,10 +225,10 @@ export function FileQueue({
   return (
     <div className="space-y-4">
       {/* Global Progress Header */}
-      <div className="bg-card border border-border rounded-xl p-4 sm:p-5 shadow-sm overflow-hidden relative">
+      <div className="surface p-4 sm:p-5 shadow-sm overflow-hidden relative">
         {/* Subtle background progress fill */}
         <div 
-          className="absolute inset-y-0 left-0 bg-primary/5 transition-all duration-300 ease-out z-0" 
+          className="absolute inset-y-0 left-0 bg-[rgba(0,200,255,0.05)] transition-all duration-300 ease-out z-0" 
           style={{ width: `${globalProgress}%` }} 
         />
         
@@ -271,7 +264,7 @@ export function FileQueue({
                 <span>Progress</span>
                 <span>{globalProgress}%</span>
               </div>
-              <Progress value={globalProgress} className="h-1.5 w-full bg-muted" />
+              <Progress value={globalProgress} className="h-1.5 w-full progress-track progress-value" />
             </div>
 
             {hasCompleted && onDownloadAll && (
@@ -279,7 +272,7 @@ export function FileQueue({
                 size="sm"
                 onClick={onDownloadAll}
                 disabled={isZipping}
-                className="gap-1.5 shrink-0 bg-success hover:bg-success/90 text-success-foreground h-9 shadow-sm"
+                className="gap-1.5 shrink-0 btn-primary h-9"
               >
                 {isZipping ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

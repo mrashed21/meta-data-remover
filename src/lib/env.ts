@@ -78,7 +78,7 @@ export const CREATOR_NAME = getPublic(
 /** Software name injected into metadata in Mode B (Sprint 10) */
 export const SOFTWARE_NAME = getPublic(
   "NEXT_PUBLIC_SOFTWARE_NAME",
-  "mrashed21 Media Processor"
+  "ZeroMeta"
 );
 
 /** GitHub repository URL for the navbar link */

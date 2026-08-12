@@ -26,6 +26,7 @@ interface ControlPanelProps {
   onProcess: () => void;
   onCancel?: () => void;
   isProcessing: boolean;
+  activeTab: "image" | "video" | "audio";
   fileCount: number;
 }
 
@@ -35,6 +36,7 @@ export function ControlPanel({
   onProcess,
   onCancel,
   isProcessing,
+  activeTab,
   fileCount,
 }: ControlPanelProps) {
 
@@ -64,7 +66,7 @@ export function ControlPanel({
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="overflow-hidden border-border/50 bg-card/30 backdrop-blur-sm">
+      <Card className="surface-glass">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Settings2 className="w-5 h-5 text-primary" />
@@ -126,75 +128,82 @@ export function ControlPanel({
             </div>
           </div>
 
-          <Separator className="bg-border/50" />
-
           {/* Image Settings */}
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-              <ImageIcon className="w-3.5 h-3.5" /> Image Rules
-            </Label>
-            <div className="space-y-2">
-              <ChecklistItem checked label="Remove EXIF" />
-              <ChecklistItem checked label="Remove GPS" />
-              <ChecklistItem checked label="Remove device info" />
-              <ChecklistItem checked label="Preserve dimensions" />
-              <ChecklistItem checked={!isOptimized} label="Preserve quality" />
-              <ChecklistItem 
-                checked={isOptimized} 
-                interactive 
-                onChange={() => toggleOptimize(!isOptimized)}
-                label="Optimize file size" 
-              />
-            </div>
-          </div>
-
-          <Separator className="bg-border/50" />
+          {activeTab === "image" && (
+            <>
+              <Separator className="bg-border/50" />
+              <div className="space-y-3">
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5" /> Image Rules
+              </Label>
+              <div className="space-y-2">
+                <ChecklistItem checked label="Remove EXIF" />
+                <ChecklistItem checked label="Remove GPS" />
+                <ChecklistItem checked label="Remove device info" />
+                <ChecklistItem checked label="Preserve dimensions" />
+                <ChecklistItem checked={!isOptimized} label="Preserve quality" />
+                <ChecklistItem 
+                  checked={isOptimized} 
+                  interactive 
+                  onChange={() => toggleOptimize(!isOptimized)}
+                  label="Optimize file size" 
+                />
+              </div>
+              </div>
+            </>
+          )}
 
           {/* Video Settings */}
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-              <Video className="w-3.5 h-3.5" /> Video Rules
-            </Label>
-            <div className="space-y-2">
-              <ChecklistItem checked label="Remove metadata" />
-              <ChecklistItem checked label="Preserve resolution" />
-              <ChecklistItem checked label="Preserve audio" />
-              <ChecklistItem 
-                checked={isOptimized} 
-                interactive 
-                onChange={() => toggleOptimize(!isOptimized)}
-                label="Optimize file size" 
-              />
-            </div>
-          </div>
-
-          <Separator className="bg-border/50" />
+          {activeTab === "video" && (
+            <>
+              <Separator className="bg-border/50" />
+              <div className="space-y-3">
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                <Video className="w-3.5 h-3.5" /> Video Rules
+              </Label>
+              <div className="space-y-2">
+                <ChecklistItem checked label="Remove metadata" />
+                <ChecklistItem checked label="Preserve resolution" />
+                <ChecklistItem checked label="Preserve audio" />
+                <ChecklistItem 
+                  checked={isOptimized} 
+                  interactive 
+                  onChange={() => toggleOptimize(!isOptimized)}
+                  label="Optimize file size" 
+                />
+              </div>
+              </div>
+            </>
+          )}
 
           {/* Audio Settings */}
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-              <Music className="w-3.5 h-3.5" /> Audio Rules
-            </Label>
-            <div className="space-y-2">
-              <ChecklistItem checked label="Remove metadata" />
-              <ChecklistItem checked label="Preserve audio quality" />
-              <ChecklistItem 
-                checked={isOptimized} 
-                interactive 
-                onChange={() => toggleOptimize(!isOptimized)}
-                label="Optimize file size" 
-              />
-            </div>
-          </div>
+          {activeTab === "audio" && (
+            <>
+              <Separator className="bg-border/50" />
+              <div className="space-y-3">
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                <Music className="w-3.5 h-3.5" /> Audio Rules
+              </Label>
+              <div className="space-y-2">
+                <ChecklistItem checked label="Remove metadata" />
+                <ChecklistItem checked label="Preserve audio quality" />
+                <ChecklistItem 
+                  checked={isOptimized} 
+                  interactive 
+                  onChange={() => toggleOptimize(!isOptimized)}
+                  label="Optimize file size" 
+                />
+              </div>
+              </div>
+            </>
+          )}
 
           <Separator className="bg-border/50" />
 
           {/* Process Button */}
           {isProcessing ? (
             <Button
-              variant="destructive"
-              size="lg"
-              className="w-full h-12 text-sm font-semibold tracking-wide"
+              className="w-full h-12 btn-secondary bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 hover:border-destructive/30"
               onClick={onCancel}
             >
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -202,9 +211,7 @@ export function ControlPanel({
             </Button>
           ) : (
             <Button
-              variant="default"
-              size="lg"
-              className="w-full h-12 text-sm font-semibold tracking-wide"
+              className="w-full h-12 btn-primary"
               onClick={onProcess}
               disabled={fileCount === 0}
             >

@@ -1,4 +1,3 @@
-import React from 'react';
 
 export function JsonLd() {
   const data = {
@@ -6,8 +5,8 @@ export function JsonLd() {
     "@graph": [
       {
         "@type": "WebApplication",
-        "name": "mrashed21 Media Processor",
-        "url": "https://mrashed21.com",
+        "name": "ZeroMeta",
+        "url": "https://mrashed21.me",
         "description": "Fast and private EXIF metadata, GPS location, and watermark remover running entirely in your browser.",
         "applicationCategory": "BrowserApplication",
         "operatingSystem": "Any",
@@ -17,14 +16,14 @@ export function JsonLd() {
           "priceCurrency": "USD"
         },
         "author": {
-          "@id": "https://mrashed21.com/#person"
+          "@id": "https://mrashed21.me/#person"
         }
       },
       {
         "@type": "Person",
-        "@id": "https://mrashed21.com/#person",
+        "@id": "https://mrashed21.me/#person",
         "name": "Muhammad Rashed",
-        "url": "https://mrashed21.com",
+        "url": "https://mrashed21.me",
         "sameAs": [
           "https://github.com/mrashed21",
           "https://linkedin.com/in/mrashed21",
@@ -52,7 +51,7 @@ export function JsonLd() {
             "name": "Does it reduce my image quality?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. By default, mrashed21 Media Processor completely preserves your original dimensions and visual quality. You optionally select 'Optimize file size' if you wish to apply compression."
+              "text": "No. By default, ZeroMeta completely preserves your original dimensions and visual quality. You optionally select 'Optimize file size' if you wish to apply compression."
             }
           },
           {

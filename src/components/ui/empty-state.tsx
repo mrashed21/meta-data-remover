@@ -115,7 +115,7 @@ function EmptyQueue({ onUpload }: { onUpload?: () => void }) {
         onUpload ? (
           <button
             onClick={onUpload}
-            className="text-xs text-[oklch(0.75_0.18_293)] hover:underline underline-offset-4 transition-colors"
+            className="text-xs text-primary hover:underline underline-offset-4 transition-colors"
           >
             Browse files →
           </button>
@@ -159,7 +159,7 @@ function EmptyError({ onRetry }: { onRetry?: () => void }) {
         onRetry ? (
           <button
             onClick={onRetry}
-            className="text-xs text-[oklch(0.75_0.18_293)] hover:underline underline-offset-4 transition-colors"
+            className="text-xs text-primary hover:underline underline-offset-4 transition-colors"
           >
             Try again →
           </button>

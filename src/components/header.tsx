@@ -2,16 +2,8 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Shield, Sparkles, Menu, FileImage, Lock, Settings } from "lucide-react";
+import { Shield, Sparkles, FileImage, Lock, Home, Info } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
-import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerBody,
-} from "@/components/ui/drawer";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -42,33 +34,33 @@ export function Header() {
   });
 
   return (
+    <>
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-sm"
+          ? "nav-surface border-b"
           : "bg-transparent border-transparent"
       }`}
     >
-      <div className="container-app h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* ─── Logo / Branding ────────────────────────────────────────────── */}
         <div className="flex items-center gap-3">
           <div className="relative group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[oklch(0.55_0.27_293)] to-[oklch(0.42_0.27_293)] flex items-center justify-center shadow-lg shadow-[oklch(0.55_0.27_293/0.3)] transition-transform duration-300 group-hover:scale-105">
+            <div className="w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center shadow-lg shadow-[rgba(0,200,255,0.2)] transition-transform duration-300 group-hover:scale-105">
               <Shield className="w-5 h-5 text-white" />
             </div>
             {/* Pulsing indicator */}
             <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-success border-2 border-background animate-pulse" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-lg font-bold tracking-tight text-foreground leading-tight">
-              mrashed21
-              <span className="text-[oklch(0.65_0.22_293)] ml-1 font-semibold">Privacy</span>
+            <h1 className="text-lg font-bold tracking-tight text-foreground leading-tight font-sans">
+              ZeroMeta
             </h1>
-            <p className="text-[10.5px] font-medium text-muted-foreground leading-none hidden sm:block uppercase tracking-widest mt-0.5">
-              Media Metadata Remover
+            <p className="text-[10px] font-medium text-muted-foreground leading-none hidden sm:block uppercase tracking-widest mt-0.5">
+              Secure Media Processing
             </p>
           </div>
         </div>
@@ -86,7 +78,7 @@ export function Header() {
           <div className="w-px h-6 bg-border" />
 
           <div className="flex items-center gap-3">
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[oklch(0.55_0.27_293/0.1)] border border-[oklch(0.55_0.27_293/0.2)] text-[oklch(0.75_0.18_293)]">
+            <div className="hidden lg:flex items-center gap-1.5 badge-brand">
               <Sparkles className="w-3.5 h-3.5" />
               <span className="text-xs font-semibold">100% Client-Side</span>
             </div>
@@ -103,50 +95,31 @@ export function Header() {
           </div>
         </div>
 
-        {/* ─── Mobile Menu (Drawer) ───────────────────────────────────────── */}
-        <div className="md:hidden">
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
-                <Menu className="w-5 h-5" />
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent side="right">
-              <DrawerHeader>
-                <DrawerTitle className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-brand" />
-                  Menu
-                </DrawerTitle>
-              </DrawerHeader>
-              <DrawerBody className="flex flex-col gap-4 py-4">
-                <nav className="flex flex-col gap-2">
-                  <a href="#features" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors">Features</a>
-                  <a href="#how-it-works" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors">How it works</a>
-                  <a href="#privacy" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-muted-foreground" /> Privacy first
-                  </a>
-                </nav>
-                <div className="mt-auto pt-6 border-t border-border flex flex-col gap-4">
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-[oklch(0.55_0.27_293/0.1)] border border-[oklch(0.55_0.27_293/0.2)] text-[oklch(0.75_0.18_293)]">
-                    <Sparkles className="w-4 h-4" />
-                    <span className="text-sm font-semibold">100% Client-Side Processing</span>
-                  </div>
-                  <Button variant="outline" className="w-full justify-start gap-2" asChild>
-                    <a
-                      href="https://github.com/mrashed21/meta-data-remover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <GithubIcon className="w-4 h-4" />
-                      View on GitHub
-                    </a>
-                  </Button>
-                </div>
-              </DrawerBody>
-            </DrawerContent>
-          </Drawer>
-        </div>
+        {/* ─── Desktop Only: No Mobile Hamburger here ─── */}
       </div>
     </motion.header>
+    
+    {/* ─── Mobile Bottom Navigation ─── */}
+    <div className="md:hidden fixed bottom-0 inset-x-0 z-50 mobile-bottom-nav">
+      <nav className="flex items-center justify-around p-2">
+        <a href="#features" className="mobile-bottom-nav-item">
+          <Sparkles className="w-5 h-5" />
+          <span>Features</span>
+        </a>
+        <a href="#how-it-works" className="mobile-bottom-nav-item">
+          <Info className="w-5 h-5" />
+          <span>Guide</span>
+        </a>
+        <a href="#privacy" className="mobile-bottom-nav-item">
+          <Lock className="w-5 h-5" />
+          <span>Privacy</span>
+        </a>
+        <a href="https://github.com/mrashed21/meta-data-remover" target="_blank" rel="noopener noreferrer" className="mobile-bottom-nav-item">
+          <GithubIcon className="w-5 h-5" />
+          <span>GitHub</span>
+        </a>
+      </nav>
+    </div>
+    </>
   );
 }
