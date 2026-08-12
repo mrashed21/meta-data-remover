@@ -176,6 +176,7 @@ export default function Home() {
           formData.append("microCrop", String(options.microCrop));
           formData.append("colorShift", String(options.colorShift));
           formData.append("noiseInjection", String(options.noiseInjection));
+          formData.append("privacyMode", options.privacyMode);
           
           if (imageFile.cropData) {
             formData.append("cropX", String(imageFile.cropData.x));
@@ -238,15 +239,21 @@ export default function Home() {
             },
             {
               key: "EXIF Data",
-              value: "Stripped ✓",
+              value: options.privacyMode === "clean-branding" ? "Cleaned + Branded ✓" : "Stripped ✓",
               category: "camera",
-              stripped: true,
+              stripped: options.privacyMode !== "clean-branding",
             },
             {
-              key: "GPS Location",
+              key: "Location / GPS",
               value: "Stripped ✓",
               category: "location",
               stripped: true,
+            },
+            {
+              key: "Author / Creator",
+              value: options.privacyMode === "clean-branding" ? "Muhammad Rashed ✓" : "Stripped ✓",
+              category: "other",
+              stripped: options.privacyMode !== "clean-branding",
             },
             {
               key: "C2PA Manifest",

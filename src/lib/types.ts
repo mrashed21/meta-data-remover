@@ -14,6 +14,7 @@ export interface ResizeOptions {
 
 export interface ProcessingOptions {
   mode: ProcessingMode;
+  privacyMode: PrivacyMode; // "privacy-clean" | "clean-branding"
   format: OutputFormat;
   quality: number;        // 80-100
   microCrop: number;      // 0-5 px

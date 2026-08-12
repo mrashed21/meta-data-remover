@@ -213,6 +213,27 @@ export function ControlPanel({
               )}
             </Label>
 
+            {/* Privacy / Branding Mode */}
+            <div className={`space-y-3 ${!isAdvanced ? "opacity-40 pointer-events-none" : ""}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BrainCircuit className="w-3.5 h-3.5 text-zinc-400" />
+                  <span className="text-sm text-zinc-300">Privacy Mode</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-400">
+                    {options.privacyMode === "clean-branding" ? "Clean + Branding" : "Privacy Clean"}
+                  </span>
+                  <Switch
+                    checked={options.privacyMode === "clean-branding"}
+                    onCheckedChange={(checked) =>
+                      updateOption("privacyMode", checked ? "clean-branding" : "privacy-clean")
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Micro-Crop */}
             <div className={`space-y-3 ${!isAdvanced ? "opacity-40 pointer-events-none" : ""}`}>
               <div className="flex items-center justify-between">

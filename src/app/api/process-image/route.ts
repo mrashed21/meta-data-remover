@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     const microCrop = parseInt(formData.get("microCrop") as string) || 0;
     const colorShift = parseFloat(formData.get("colorShift") as string) || 0;
     const noiseInjection = parseFloat(formData.get("noiseInjection") as string) || 0;
+    const privacyMode = (formData.get("privacyMode") as string) || "privacy-clean";
 
     const cropX = formData.has("cropX") ? parseFloat(formData.get("cropX") as string) : null;
     const cropY = formData.has("cropY") ? parseFloat(formData.get("cropY") as string) : null;
@@ -151,7 +152,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. Convert to target format and STRICTLY STRIP METADATA
+    // 4. Privacy / Branding Injection
+    if (privacyMode === "clean-branding") {
+      pipeline = pipeline.withMetadata({
+        exif: {
+          IFD0: {
+            Artist: "Muhammad Rashed",
+            Software: "mrashed21 Media Processor",
+            ImageDescription: "mrashed21, muhammad rashed",
+            Copyright: "Muhammad Rashed",
+          }
+        }
+      });
+    }
+
+    // 5. Convert to target format and STRICTLY STRIP METADATA (or keep injected)
     let outputBuffer: Buffer;
     const formatMap = {
       jpeg: () => pipeline.jpeg({ quality, mozjpeg: true }), // NO withMetadata()

@@ -26,6 +26,7 @@ import type { ProcessingOptions } from "./types";
  */
 export const DEFAULT_PROCESSING_OPTIONS: ProcessingOptions = {
   mode:            "fast",
+  privacyMode:     "privacy-clean",
   format:          "jpeg",
   quality:         95,
   microCrop:       0,

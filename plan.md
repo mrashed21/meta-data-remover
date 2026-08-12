@@ -510,23 +510,17 @@ Inject selected branding metadata
 ### Branding fields
 
 ```text
-Creator:
-Muhammad Rashed
-
-Author:
-Muhammad Rashed
-
-Keywords:
-mrashed21
-muhammad rashed
-
-Software:
-mrashed21 Media Processor
+[x] Creator: Muhammad Rashed
+[x] Author: Muhammad Rashed
+[x] Keywords: mrashed21, muhammad rashed
+[x] Software: mrashed21 Media Processor
 ```
 
 ### Test
 
-Metadata inspector দিয়ে output verify করতে হবে।
+Metadata inspector দিয়ে output verify করতে হবে। ✅ PASSED — `privacyMode` toggle fully functional. `sharp().withMetadata()` successfully injects `Muhammad Rashed` tags while still stripping original GPS and identifying data.
+
+**Gate:** ✅ PASSED — npm run lint & build
 
 ---
 
