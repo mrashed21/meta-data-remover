@@ -227,7 +227,7 @@ Existing UI-এর উপর professional design system তৈরি করা�
 
 * [x] Global spacing system
 * [x] Typography hierarchy
-* [ ] Button component
+* [x] Button component
 * [ ] Card component
 * [ ] Badge component
 * [ ] Progress component
