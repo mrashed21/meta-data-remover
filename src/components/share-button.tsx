@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Share2, Download, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Check, Download, Share2 } from "lucide-react";
+import { useCallback, useState } from "react";
 
 interface ShareButtonProps {
   blob: Blob;
@@ -27,12 +27,11 @@ export function ShareButton({ blob, fileName }: ShareButtonProps) {
         setShared(true);
         setTimeout(() => setShared(false), 2000);
       } else {
-        // Fallback: download
         downloadBlob(blob, fileName);
       }
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
-        // User cancelled share, not an error
+        
         downloadBlob(blob, fileName);
       }
     }

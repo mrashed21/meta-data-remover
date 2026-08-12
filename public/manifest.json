@@ -1,6 +1,6 @@
 {
-  "name": "CleanExif AI",
-  "short_name": "CleanExif",
+  "name": "ZeroMeta",
+  "short_name": "ZeroMeta",
   "description": "AI Image Metadata & Invisible Watermark Remover Studio",
   "start_url": "/",
   "display": "standalone",

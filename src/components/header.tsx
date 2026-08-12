@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Shield, Sparkles, FileImage, Lock, Home, Info } from "lucide-react";
-import { motion, useScroll, useMotionValueEvent } from "motion/react";
+import { Info, Lock, Shield, Sparkles } from "lucide-react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import * as React from "react";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -46,7 +46,7 @@ export function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* ─── Logo / Branding ────────────────────────────────────────────── */}
+        {/* ─── Logo / Branding  */}
         <div className="flex items-center gap-3">
           <div className="relative group">
             <div className="w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center shadow-lg shadow-[rgba(0,200,255,0.2)] transition-transform duration-300 group-hover:scale-105">
@@ -65,7 +65,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* ─── Desktop Navigation ─────────────────────────────────────────── */}
+        {/* ─── Desktop Navigation  */}
         <div className="hidden md:flex items-center gap-6">
           <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -84,7 +84,7 @@ export function Header() {
             </div>
             <Button variant="ghost" size="icon" asChild className="rounded-full">
               <a
-                href="https://github.com/mrashed21/meta-data-remover"
+                href="https://github.com/mrashed21"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub Repository"
@@ -114,7 +114,7 @@ export function Header() {
           <Lock className="w-5 h-5" />
           <span>Privacy</span>
         </a>
-        <a href="https://github.com/mrashed21/meta-data-remover" target="_blank" rel="noopener noreferrer" className="mobile-bottom-nav-item">
+        <a href="https://github.com/mrashed21" target="_blank" rel="noopener noreferrer" className="mobile-bottom-nav-item">
           <GithubIcon className="w-5 h-5" />
           <span>GitHub</span>
         </a>

@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
-import { Slider as SliderPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
+import { Slider as SliderPrimitive } from "radix-ui";
+import * as React from "react";
 
 const Slider = React.forwardRef<
   React.ComponentRef<typeof SliderPrimitive.Root>,
@@ -12,12 +12,12 @@ const Slider = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex w-full touch-none select-none items-center group",
-      className
+      className,
     )}
     {...props}
   >
     <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-zinc-800">
-      <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full" />
+      <SliderPrimitive.Range className="absolute h-full bg-linear-to-r from-violet-500 to-fuchsia-500 rounded-full" />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border-2 border-violet-500 bg-zinc-950 shadow-lg shadow-violet-500/20 ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-110 hover:shadow-violet-500/40 cursor-grab active:cursor-grabbing" />
   </SliderPrimitive.Root>

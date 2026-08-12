@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Slot } from "radix-ui";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Slot } from "radix-ui";
+import * as React from "react";
 
 const buttonVariants = cva(
   // Base styles — shared by all variants
@@ -17,68 +17,61 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // ─── Default — Premium CTA ──────────────────────────────────────────────
-        default:
-          "bg-primary text-primary-foreground hover:bg-[#D8B894]",
+        default: "bg-primary text-primary-foreground hover:bg-[#D8B894]",
 
-        // ─── Success — emerald filled ────────────────────────────────────────
         success: [
           "bg-success text-white",
           "shadow-[0_2px_12px_rgba(163,230,53,0.15)]",
           "hover:bg-[#86d628]",
         ],
 
-        // ─── Destructive ─────────────────────────────────────────────────────
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 
-        // ─── Secondary ───────────────────────────────────────────────────────
         secondary:
           "bg-transparent border border-border text-foreground hover:bg-[#141414]",
 
-        // ─── Outline — transparent ──────────────────────────────────────────
         outline: [
           "border border-border bg-transparent",
           "text-foreground",
           "hover:bg-[#141414] hover:text-foreground",
         ],
 
-        // ─── Ghost — no border, subtle hover ────────────────────────────────
-        ghost:
-          "text-foreground/70 hover:bg-muted hover:text-foreground",
+        ghost: "text-foreground/70 hover:bg-muted hover:text-foreground",
 
-        // ─── Link — text only ────────────────────────────────────────────────
-        link:
-          "text-[oklch(0.75_0.18_293)] underline-offset-4 hover:underline",
+        link: "text-[oklch(0.75_0.18_293)] underline-offset-4 hover:underline",
       },
 
       size: {
-        sm:      "h-8  px-3  text-xs  rounded-md  gap-1.5",
+        sm: "h-8  px-3  text-xs  rounded-md  gap-1.5",
         default: "h-10 px-4  text-sm",
-        lg:      "h-12 px-6  text-base rounded-xl",
-        xl:      "h-14 px-8  text-lg  rounded-xl  gap-3",
+        lg: "h-12 px-6  text-base rounded-xl",
+        xl: "h-14 px-8  text-lg  rounded-xl  gap-3",
         "icon-sm": "h-8  w-8  rounded-md  p-0",
-        icon:    "h-10 w-10 p-0",
+        icon: "h-10 w-10 p-0",
         "icon-lg": "h-12 w-12 rounded-xl p-0",
       },
     },
     defaultVariants: {
       variant: "default",
-      size:    "default",
+      size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  /** Show a loading spinner and disable the button */
   loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading, children, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, loading, children, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot.Slot : "button";
     return (
       <Comp
@@ -100,8 +93,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             >
               <circle
                 className="opacity-25"
-                cx="12" cy="12" r="10"
-                stroke="currentColor" strokeWidth="4"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
               />
               <path
                 className="opacity-75"
@@ -111,10 +107,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             </svg>
             {children}
           </>
-        ) : children}
+        ) : (
+          children
+        )}
       </Comp>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

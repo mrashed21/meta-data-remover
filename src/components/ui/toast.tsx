@@ -1,30 +1,16 @@
 "use client";
 
-/**
- * toast.tsx
- *
- * Toast notification system built on Radix Toast primitive.
- *
- * Usage (provider in layout):
- *   <ToastProvider>
- *     {children}
- *     <ToastViewport />
- *   </ToastProvider>
- *
- * Usage (triggering a toast):
- *   const { toast } = useToast();
- *   toast({ title: "Done!", description: "File processed.", variant: "success" });
- */
-
-import * as React from "react";
-import { Toast as ToastPrimitive } from "radix-ui";
-import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from "lucide-react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-
-// =============================================================================
-// Variants
-// =============================================================================
+import { cva, type VariantProps } from "class-variance-authority";
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  X,
+} from "lucide-react";
+import { Toast as ToastPrimitive } from "radix-ui";
+import * as React from "react";
 
 const toastVariants = cva(
   [
@@ -41,8 +27,7 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-card border-border text-foreground",
+        default: "bg-card border-border text-foreground",
         success: [
           "bg-[oklch(0.62_0.17_162/0.12)] border-[oklch(0.62_0.17_162/0.3)]",
           "text-foreground",
@@ -64,19 +49,23 @@ const toastVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 const iconMap: Record<string, React.ReactNode> = {
-  success: <CheckCircle2 className="h-5 w-5 text-[oklch(0.72_0.17_162)] shrink-0 mt-0.5" />,
-  error:   <AlertCircle   className="h-5 w-5 text-[oklch(0.70_0.20_25)] shrink-0 mt-0.5" />,
-  warning: <AlertTriangle className="h-5 w-5 text-[oklch(0.80_0.15_70)] shrink-0 mt-0.5" />,
-  info:    <Info           className="h-5 w-5 text-[oklch(0.75_0.18_293)] shrink-0 mt-0.5" />,
+  success: (
+    <CheckCircle2 className="h-5 w-5 text-[oklch(0.72_0.17_162)] shrink-0 mt-0.5" />
+  ),
+  error: (
+    <AlertCircle className="h-5 w-5 text-[oklch(0.70_0.20_25)] shrink-0 mt-0.5" />
+  ),
+  warning: (
+    <AlertTriangle className="h-5 w-5 text-[oklch(0.80_0.15_70)] shrink-0 mt-0.5" />
+  ),
+  info: (
+    <Info className="h-5 w-5 text-[oklch(0.75_0.18_293)] shrink-0 mt-0.5" />
+  ),
 };
-
-// =============================================================================
-// Radix primitives
-// =============================================================================
 
 const ToastProvider = ToastPrimitive.Provider;
 
@@ -87,24 +76,21 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitive.Viewport
     ref={ref}
     className={cn(
-      "fixed bottom-0 right-0 z-[100]",
+      "fixed bottom-0 right-0 z-100",
       "flex max-h-screen w-full flex-col-reverse gap-2 p-4",
-      "sm:max-w-[420px]",
-      className
+      "sm:max-w-105",
+      className,
     )}
     {...props}
   />
 ));
 ToastViewport.displayName = ToastPrimitive.Viewport.displayName;
 
-// =============================================================================
-// Toast
-// =============================================================================
-
 export type ToastVariant = "default" | "success" | "error" | "warning" | "info";
 
 interface ToastProps
-  extends React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root>,
+  extends
+    React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root>,
     VariantProps<typeof toastVariants> {}
 
 const Toast = React.forwardRef<
@@ -119,7 +105,7 @@ const Toast = React.forwardRef<
     {/* Icon */}
     {variant && variant !== "default" && iconMap[variant]}
     <div className="flex-1 min-w-0">{children}</div>
-    {/* Close button */}
+
     <ToastPrimitive.Close
       className={cn(
         "absolute right-2 top-2 rounded-md p-1",
@@ -154,7 +140,10 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitive.Description
     ref={ref}
-    className={cn("mt-0.5 text-xs text-muted-foreground leading-relaxed", className)}
+    className={cn(
+      "mt-0.5 text-xs text-muted-foreground leading-relaxed",
+      className,
+    )}
     {...props}
   />
 ));
@@ -172,16 +161,12 @@ const ToastAction = React.forwardRef<
       "text-foreground/80 transition-colors",
       "hover:bg-muted hover:text-foreground",
       "focus:outline-none focus:ring-1 focus:ring-ring",
-      className
+      className,
     )}
     {...props}
   />
 ));
 ToastAction.displayName = ToastPrimitive.Action.displayName;
-
-// =============================================================================
-// useToast hook
-// =============================================================================
 
 export interface ToastMessage {
   id: string;
@@ -204,7 +189,11 @@ interface ToastContextValue {
 
 const ToastContext = React.createContext<ToastContextValue | null>(null);
 
-export function ToastContextProvider({ children }: { children: React.ReactNode }) {
+export function ToastContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [toasts, setToasts] = React.useState<ToastMessage[]>([]);
 
   const toast = React.useCallback((msg: Omit<ToastMessage, "id">) => {
@@ -228,10 +217,14 @@ export function ToastContextProvider({ children }: { children: React.ReactNode }
             key={t.id}
             variant={t.variant}
             duration={t.duration ?? 5000}
-            onOpenChange={(open) => { if (!open) dismiss(t.id); }}
+            onOpenChange={(open) => {
+              if (!open) dismiss(t.id);
+            }}
           >
             {t.title && <ToastTitle>{t.title}</ToastTitle>}
-            {t.description && <ToastDescription>{t.description}</ToastDescription>}
+            {t.description && (
+              <ToastDescription>{t.description}</ToastDescription>
+            )}
             {t.action && (
               <ToastAction altText={t.action.label} onClick={t.action.onClick}>
                 {t.action.label}
@@ -248,15 +241,16 @@ export function ToastContextProvider({ children }: { children: React.ReactNode }
 
 export function useToast(): ToastContextValue {
   const ctx = React.useContext(ToastContext);
-  if (!ctx) throw new Error("useToast must be used inside <ToastContextProvider>");
+  if (!ctx)
+    throw new Error("useToast must be used inside <ToastContextProvider>");
   return ctx;
 }
 
 export {
-  ToastProvider,
-  ToastViewport,
   Toast,
-  ToastTitle,
-  ToastDescription,
   ToastAction,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
 };

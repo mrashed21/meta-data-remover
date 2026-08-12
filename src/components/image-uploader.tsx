@@ -1,13 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { MAX_FILE_SIZE, SUPPORTED_FILE_TYPES } from "@/lib/constants";
+import type { ImageFile } from "@/lib/types";
+import { cn, formatFileSize } from "@/lib/utils";
+import { Edit2, FileImage, ImagePlus, Upload, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { motion, AnimatePresence } from "motion/react";
-import { Upload, ImagePlus, X, FileImage, Edit2 } from "lucide-react";
-import { cn, formatFileSize } from "@/lib/utils";
-import { SUPPORTED_FILE_TYPES, MAX_FILE_SIZE } from "@/lib/constants";
-import type { ImageFile } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 
 interface ImageUploaderProps {
   files: ImageFile[];
@@ -28,7 +29,7 @@ export function ImageUploader({
     (acceptedFiles: File[]) => {
       onFilesAdded(acceptedFiles);
     },
-    [onFilesAdded]
+    [onFilesAdded],
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } =
@@ -51,14 +52,14 @@ export function ImageUploader({
           {...getRootProps()}
           className={cn(
             "relative rounded-xl border-2 border-dashed p-8 sm:p-12 text-center cursor-pointer transition-all duration-300 group overflow-hidden",
-            isDragActive && !isDragReject &&
+            isDragActive &&
+              !isDragReject &&
               "border-foreground bg-muted scale-[1.01]",
-            isDragReject &&
-              "border-destructive bg-destructive/10",
+            isDragReject && "border-destructive bg-destructive/10",
             !isDragActive &&
               !isDragReject &&
               "border-border hover:border-zinc-500 hover:bg-muted/50",
-            disabled && "opacity-50 cursor-not-allowed"
+            disabled && "opacity-50 cursor-not-allowed",
           )}
         >
           <input {...getInputProps()} />
@@ -67,7 +68,7 @@ export function ImageUploader({
           <div
             className={cn(
               "absolute inset-0 opacity-0 transition-opacity duration-500",
-              isDragActive && "opacity-100"
+              isDragActive && "opacity-100",
             )}
           >
             <div className="absolute inset-0 bg-muted/20" />
@@ -119,7 +120,9 @@ export function ImageUploader({
                   <div>
                     <p className="text-base font-medium text-foreground">
                       Drop images here or{" "}
-                      <span className="text-zinc-500 font-semibold cursor-pointer underline">browse</span>
+                      <span className="text-zinc-500 font-semibold cursor-pointer underline">
+                        browse
+                      </span>
                     </p>
                     <p className="text-sm text-zinc-500 mt-1">
                       JPG, PNG, WebP, TIFF • Max 50MB per file
@@ -150,7 +153,6 @@ export function ImageUploader({
                 transition={{ delay: index * 0.05 }}
                 className="relative group rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900/50 aspect-square"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={imageFile.preview}
                   alt={imageFile.file.name}
@@ -158,7 +160,7 @@ export function ImageUploader({
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div className="absolute bottom-0 left-0 right-0 p-2">
                     <p className="text-xs text-zinc-300 truncate">
                       {imageFile.file.name}

@@ -1,49 +1,60 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import JSZip from "jszip";
-import { Sparkles, ArrowDown, Shield, Zap, BrainCircuit, Image as ImageIcon, Video, Music } from "lucide-react";
+import {
+  BrainCircuit,
+  Image as ImageIcon,
+  Music,
+  Shield,
+  Sparkles,
+  Video,
+  Zap,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useRef, useState } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Header } from "@/components/header";
-import { UniversalUploader } from "@/components/universal-uploader";
-import { ControlPanel } from "@/components/control-panel";
-import { LandingSections } from "@/components/landing-sections";
-import { MetadataInspector } from "@/components/metadata-inspector";
 import { CompareSlider } from "@/components/compare-slider";
+import { ControlPanel } from "@/components/control-panel";
 import { FileQueue } from "@/components/file-queue";
-import { ShareButton } from "@/components/share-button";
+import { Header } from "@/components/header";
+import { LandingSections } from "@/components/landing-sections";
 import { LivePreviewEditor } from "@/components/live-preview-editor";
+import { MetadataInspector } from "@/components/metadata-inspector";
+import { ShareButton } from "@/components/share-button";
 import { Badge } from "@/components/ui/badge";
+import { UniversalUploader } from "@/components/universal-uploader";
 
-import { generateId, generateOutputFilename } from "@/lib/utils";
-import { DEFAULT_PROCESSING_OPTIONS, FORMAT_MIME } from "@/lib/constants";
 import { extractMetadata, processImageCanvas } from "@/lib/canvas-processor";
+import { DEFAULT_PROCESSING_OPTIONS, FORMAT_MIME } from "@/lib/constants";
 import type {
-  ImageFile,
-  ProcessingOptions,
-  OutputFormat,
-  ProcessingMode,
-  MetadataField,
   CropData,
+  ImageFile,
+  MetadataField,
+  ProcessingOptions,
   ResizeOptions,
 } from "@/lib/types";
+import {
+  generateId,
+  generateOutputFilename,
+  getImageDimensions,
+} from "@/lib/utils";
 
 export default function Home() {
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [options, setOptions] = useState<ProcessingOptions>(
-    DEFAULT_PROCESSING_OPTIONS
+    DEFAULT_PROCESSING_OPTIONS,
   );
   const [isProcessing, setIsProcessing] = useState(false);
   const [isZipping, setIsZipping] = useState(false);
   const [editingImageId, setEditingImageId] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"image" | "video" | "audio">("image");
-  const filteredFiles = files.filter(f => f.mediaType === activeTab);
+  const [activeTab, setActiveTab] = useState<"image" | "video" | "audio">(
+    "image",
+  );
+  const filteredFiles = files.filter((f) => f.mediaType === activeTab);
 
-  // Inspector state
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [inspectorFile, setInspectorFile] = useState<ImageFile | null>(null);
 
@@ -60,6 +71,8 @@ export default function Home() {
       newFiles.map(async (file) => {
         const preview = URL.createObjectURL(file);
         const metadataBefore = await extractMetadata(file);
+        const dims = await getImageDimensions(file);
+
         return {
           id: generateId(),
           file,
@@ -71,10 +84,12 @@ export default function Home() {
           processedPreview: null,
           metadataBefore,
           metadataAfter: [],
+          width: dims?.width,
+          height: dims?.height,
         };
-      })
+      }),
     );
-    setFiles((prev) => [...prev, ...imageFiles as any]);
+    setFiles((prev) => [...prev, ...(imageFiles as any)]);
   }, []);
 
   // Handle file removal
@@ -91,11 +106,13 @@ export default function Home() {
 
   const handleClearAll = useCallback(() => {
     setFiles((prev) => {
-      const remaining = prev.filter(f => f.mediaType !== activeTab);
-      prev.filter(f => f.mediaType === activeTab).forEach((file) => {
-        URL.revokeObjectURL(file.preview);
-        if (file.processedPreview) URL.revokeObjectURL(file.processedPreview);
-      });
+      const remaining = prev.filter((f) => f.mediaType !== activeTab);
+      prev
+        .filter((f) => f.mediaType === activeTab)
+        .forEach((file) => {
+          URL.revokeObjectURL(file.preview);
+          if (file.processedPreview) URL.revokeObjectURL(file.processedPreview);
+        });
       return remaining;
     });
   }, [activeTab]);
@@ -104,24 +121,33 @@ export default function Home() {
     setEditingImageId(id);
   }, []);
 
-  const handleSaveEdit = useCallback((id: string, crop: CropData | undefined, resize: ResizeOptions | undefined) => {
-    setFiles((prev) =>
-      prev.map((f) =>
-        f.id === id ? { ...f, cropData: crop, customResize: resize } : f
-      )
-    );
-  }, []);
+  const handleSaveEdit = useCallback(
+    (
+      id: string,
+      crop: CropData | undefined,
+      resize: ResizeOptions | undefined,
+    ) => {
+      setFiles((prev) =>
+        prev.map((f) =>
+          f.id === id ? { ...f, cropData: crop, customResize: resize } : f,
+        ),
+      );
+    },
+    [],
+  );
 
   const handleRename = useCallback((id: string, newName: string) => {
     setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, customName: newName } : f))
+      prev.map((f) => (f.id === id ? { ...f, customName: newName } : f)),
     );
   }, []);
 
   // Process all files in current tab
   const handleProcess = useCallback(async () => {
     const filesToProcess = files.filter(
-      (f) => (f.status === "queued" || f.status === "error") && f.mediaType === activeTab
+      (f) =>
+        (f.status === "queued" || f.status === "error") &&
+        f.mediaType === activeTab,
     );
     if (filesToProcess.length === 0) return;
 
@@ -135,34 +161,46 @@ export default function Home() {
       setFiles((prev) =>
         prev.map((f) =>
           f.id === imageFile.id
-            ? { ...f, status: "processing" as const, progress: 10, error: undefined }
-            : f
-        )
+            ? {
+                ...f,
+                status: "processing" as const,
+                progress: 10,
+                error: undefined,
+              }
+            : f,
+        ),
       );
 
       try {
         let processedBlob: Blob;
         let metadataAfter: MetadataField[];
 
-        if (imageFile.mediaType === "video" || imageFile.mediaType === "audio") {
+        if (
+          imageFile.mediaType === "video" ||
+          imageFile.mediaType === "audio"
+        ) {
           // Dynamically load ffmpeg to avoid impacting bundle size for image-only users
           const { processMediaFFmpeg } = await import("@/lib/ffmpeg-processor");
-          
-          const result = await processMediaFFmpeg(imageFile as any, options, (prog) => {
-            setFiles((prev) =>
-              prev.map((f) =>
-                f.id === imageFile.id ? { ...f, progress: prog } : f
-              )
-            );
-          });
+
+          const result = await processMediaFFmpeg(
+            imageFile as any,
+            options,
+            (prog) => {
+              setFiles((prev) =>
+                prev.map((f) =>
+                  f.id === imageFile.id ? { ...f, progress: prog } : f,
+                ),
+              );
+            },
+          );
           processedBlob = result.blob;
           metadataAfter = result.metadataAfter;
         } else if (options.mode === "fast") {
           // Client-side Canvas processing
           setFiles((prev) =>
             prev.map((f) =>
-              f.id === imageFile.id ? { ...f, progress: 30 } : f
-            )
+              f.id === imageFile.id ? { ...f, progress: 30 } : f,
+            ),
           );
 
           const result = await processImageCanvas(imageFile, options);
@@ -172,8 +210,8 @@ export default function Home() {
           // Server-side Sharp processing
           setFiles((prev) =>
             prev.map((f) =>
-              f.id === imageFile.id ? { ...f, progress: 20 } : f
-            )
+              f.id === imageFile.id ? { ...f, progress: 20 } : f,
+            ),
           );
 
           const formData = new FormData();
@@ -184,25 +222,35 @@ export default function Home() {
           formData.append("colorShift", String(options.colorShift));
           formData.append("noiseInjection", String(options.noiseInjection));
           formData.append("privacyMode", options.privacyMode);
-          
+
           if (imageFile.cropData) {
             formData.append("cropX", String(imageFile.cropData.x));
             formData.append("cropY", String(imageFile.cropData.y));
             formData.append("cropW", String(imageFile.cropData.width));
             formData.append("cropH", String(imageFile.cropData.height));
           }
-          
+
           const activeResize = imageFile.customResize || options.globalResize;
-          if (activeResize) {
-            if (activeResize.width) formData.append("resizeW", String(activeResize.width));
-            if (activeResize.height) formData.append("resizeH", String(activeResize.height));
-            formData.append("resizeMaintainAspect", String(activeResize.maintainAspectRatio));
+          if (activeResize && activeResize.enabled) {
+            formData.append("resizeEnabled", "true");
+            if (activeResize.width)
+              formData.append("resizeW", String(activeResize.width));
+            if (activeResize.height)
+              formData.append("resizeH", String(activeResize.height));
+            formData.append(
+              "resizeMaintainAspect",
+              String(activeResize.maintainAspectRatio),
+            );
+            if (activeResize.preset)
+              formData.append("resizePreset", activeResize.preset);
+            if (activeResize.mode)
+              formData.append("resizeMode", activeResize.mode);
           }
 
           setFiles((prev) =>
             prev.map((f) =>
-              f.id === imageFile.id ? { ...f, progress: 50 } : f
-            )
+              f.id === imageFile.id ? { ...f, progress: 50 } : f,
+            ),
           );
 
           const response = await fetch("/api/process-image", {
@@ -214,20 +262,22 @@ export default function Home() {
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(
-              errorData.error || `Server error: ${response.status}`
+              errorData.error || `Server error: ${response.status}`,
             );
           }
 
           setFiles((prev) =>
             prev.map((f) =>
-              f.id === imageFile.id ? { ...f, progress: 80 } : f
-            )
+              f.id === imageFile.id ? { ...f, progress: 80 } : f,
+            ),
           );
 
           const contentType =
             response.headers.get("Content-Type") ||
             FORMAT_MIME[options.format] ||
             "image/jpeg";
+          const processedW = response.headers.get("X-Processed-Width");
+          const processedH = response.headers.get("X-Processed-Height");
           const arrayBuffer = await response.arrayBuffer();
           processedBlob = new Blob([arrayBuffer], { type: contentType });
 
@@ -244,9 +294,22 @@ export default function Home() {
               category: "other",
               stripped: false,
             },
+            ...(processedW && processedH
+              ? [
+                  {
+                    key: "Dimensions",
+                    value: `${processedW} × ${processedH}`,
+                    category: "other" as const,
+                    stripped: false,
+                  },
+                ]
+              : []),
             {
               key: "EXIF Data",
-              value: options.privacyMode === "clean-branding" ? "Cleaned + Branded ✓" : "Stripped ✓",
+              value:
+                options.privacyMode === "clean-branding"
+                  ? "Cleaned + Branded ✓"
+                  : "Stripped ✓",
               category: "camera",
               stripped: options.privacyMode !== "clean-branding",
             },
@@ -258,7 +321,10 @@ export default function Home() {
             },
             {
               key: "Author / Creator",
-              value: options.privacyMode === "clean-branding" ? "Muhammad Rashed ✓" : "Stripped ✓",
+              value:
+                options.privacyMode === "clean-branding"
+                  ? "Muhammad Rashed ✓"
+                  : "Stripped ✓",
               category: "other",
               stripped: options.privacyMode !== "clean-branding",
             },
@@ -317,10 +383,13 @@ export default function Home() {
         const processedPreview = URL.createObjectURL(processedBlob);
 
         let targetExt: string = options.format;
-        if (imageFile.mediaType === "video" || imageFile.mediaType === "audio") {
-          targetExt = imageFile.file.name.split('.').pop() || "bin";
+        if (
+          imageFile.mediaType === "video" ||
+          imageFile.mediaType === "audio"
+        ) {
+          targetExt = imageFile.file.name.split(".").pop() || "bin";
         }
-        
+
         const customName = generateOutputFilename(targetExt);
 
         setFiles((prev) =>
@@ -335,8 +404,8 @@ export default function Home() {
                   metadataAfter,
                   customName,
                 }
-              : f
-          )
+              : f,
+          ),
         );
       } catch (err) {
         if ((err as Error).name === "AbortError") break;
@@ -350,8 +419,8 @@ export default function Home() {
                   error:
                     err instanceof Error ? err.message : "Processing failed",
                 }
-              : f
-          )
+              : f,
+          ),
         );
       }
     }
@@ -374,7 +443,9 @@ export default function Home() {
       if (!file?.processedBlob) return;
 
       const ext = options.format === "jpeg" ? "jpg" : options.format;
-      let outputName = file.customName || file.file.name.replace(/\.[^.]+$/, `_cleaned.${ext}`);
+      let outputName =
+        file.customName ||
+        file.file.name.replace(/\.[^.]+$/, `_cleaned.${ext}`);
       if (!outputName.includes(".")) outputName += `.${ext}`;
 
       const url = URL.createObjectURL(file.processedBlob);
@@ -386,13 +457,14 @@ export default function Home() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     },
-    [files, options.format]
+    [files, options.format],
   );
 
   // Download all as ZIP
   const handleDownloadAll = useCallback(async () => {
     const processedFiles = files.filter(
-      (f) => f.status === "done" && f.processedBlob && f.mediaType === activeTab
+      (f) =>
+        f.status === "done" && f.processedBlob && f.mediaType === activeTab,
     );
     if (processedFiles.length === 0) return;
 
@@ -403,10 +475,9 @@ export default function Home() {
 
       for (const file of processedFiles) {
         if (file.processedBlob) {
-          let outputName = file.customName || file.file.name.replace(
-            /\.[^.]+$/,
-            `_cleaned.${ext}`
-          );
+          let outputName =
+            file.customName ||
+            file.file.name.replace(/\.[^.]+$/, `_cleaned.${ext}`);
           if (!outputName.includes(".")) outputName += `.${ext}`;
           zip.file(outputName, file.processedBlob);
         }
@@ -417,15 +488,17 @@ export default function Home() {
       const a = document.createElement("a");
       a.href = url;
       a.download = `ZeroMeta-${activeTab}-processed.zip`;
-      
+
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      
+
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (err) {
       console.error("ZIP creation failed:", err);
-      alert("Failed to create ZIP file. Please try downloading files individually.");
+      alert(
+        "Failed to create ZIP file. Please try downloading files individually.",
+      );
     } finally {
       setIsZipping(false);
     }
@@ -440,7 +513,7 @@ export default function Home() {
         setInspectorOpen(true);
       }
     },
-    [files]
+    [files],
   );
 
   // Open compare slider for a file
@@ -451,11 +524,13 @@ export default function Home() {
         setCompareFile(file);
       }
     },
-    [files]
+    [files],
   );
 
   // Compute derived state for the current tab
-  const processingCount = filteredFiles.filter((f) => f.status === "processing").length;
+  const processingCount = filteredFiles.filter(
+    (f) => f.status === "processing",
+  ).length;
   const queuedCount = filteredFiles.filter((f) => f.status === "queued").length;
   const doneCount = filteredFiles.filter((f) => f.status === "done").length;
   const errorCount = filteredFiles.filter((f) => f.status === "error").length;
@@ -503,7 +578,9 @@ export default function Home() {
                 className="text-5xl md:text-7xl font-bold max-w-4xl mb-6 tracking-tight"
               >
                 Strip Metadata. <br className="sm:hidden" />
-                <span className="text-gradient-cyan">Protect Your Privacy.</span>
+                <span className="text-gradient-cyan">
+                  Protect Your Privacy.
+                </span>
               </motion.h2>
 
               {/* Hero Description */}
@@ -513,7 +590,9 @@ export default function Home() {
                 transition={{ delay: 0.3 }}
                 className="text-lg md:text-xl max-w-2xl text-muted-foreground mb-10 leading-relaxed"
               >
-                Remove hidden EXIF data, GPS locations, C2PA manifests, and AI tracking watermarks from your media. Fast, secure, and entirely browser-based.
+                Remove hidden EXIF data, GPS locations, C2PA manifests, and AI
+                tracking watermarks from your media. Fast, secure, and entirely
+                browser-based.
               </motion.p>
 
               {/* Feature Highlights */}
@@ -535,7 +614,9 @@ export default function Home() {
                     <div className="w-8 h-8 rounded-lg bg-[rgba(0,200,255,0.1)] flex items-center justify-center">
                       <feature.icon className="w-4 h-4 text-brand" />
                     </div>
-                    <span className="text-sm font-medium text-foreground">{feature.label}</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {feature.label}
+                    </span>
                   </div>
                 ))}
               </motion.div>
@@ -548,23 +629,41 @@ export default function Home() {
                 className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-widest mt-8"
               >
                 <span>Supported Formats:</span>
-                <span className="text-foreground">JPG, PNG, WebP, MP4, MP3</span>
+                <span className="text-foreground">
+                  JPG, PNG, WebP, MP4, MP3
+                </span>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Main layout */}
-        <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as any)} className="w-full space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(val) => setActiveTab(val as any)}
+          className="w-full space-y-6"
+        >
           <TabsList className="w-full sm:w-auto h-12 bg-card/80 backdrop-blur-md border border-border/50 flex p-1 rounded-xl">
-            <TabsTrigger value="image" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
-              <ImageIcon className="w-4 h-4" /> <span className="hidden sm:inline">Images</span>
+            <TabsTrigger
+              value="image"
+              className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all"
+            >
+              <ImageIcon className="w-4 h-4" />{" "}
+              <span className="hidden sm:inline">Images</span>
             </TabsTrigger>
-            <TabsTrigger value="video" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
-              <Video className="w-4 h-4" /> <span className="hidden sm:inline">Videos</span>
+            <TabsTrigger
+              value="video"
+              className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all"
+            >
+              <Video className="w-4 h-4" />{" "}
+              <span className="hidden sm:inline">Videos</span>
             </TabsTrigger>
-            <TabsTrigger value="audio" className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all">
-              <Music className="w-4 h-4" /> <span className="hidden sm:inline">Audio</span>
+            <TabsTrigger
+              value="audio"
+              className="flex-1 sm:flex-none gap-2 h-10 px-6 rounded-lg data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none transition-all"
+            >
+              <Music className="w-4 h-4" />{" "}
+              <span className="hidden sm:inline">Audio</span>
             </TabsTrigger>
           </TabsList>
 
@@ -614,20 +713,19 @@ export default function Home() {
                         </h3>
                         {(compareFile || firstCompleted)?.processedBlob && (
                           <ShareButton
-                            blob={(compareFile || firstCompleted)!.processedBlob!}
-                            fileName={
-                              (compareFile || firstCompleted)!.file.name.replace(
-                                /\.[^.]+$/,
-                                `_cleaned.${options.format === "jpeg" ? "jpg" : options.format}`
-                              )
+                            blob={
+                              (compareFile || firstCompleted)!.processedBlob!
                             }
+                            fileName={(compareFile ||
+                              firstCompleted)!.file.name.replace(
+                              /\.[^.]+$/,
+                              `_cleaned.${options.format === "jpeg" ? "jpg" : options.format}`,
+                            )}
                           />
                         )}
                       </div>
                       <CompareSlider
-                        originalSrc={
-                          (compareFile || firstCompleted)!.preview
-                        }
+                        originalSrc={(compareFile || firstCompleted)!.preview}
                         processedSrc={
                           (compareFile || firstCompleted)!.processedPreview!
                         }
@@ -649,7 +747,7 @@ export default function Home() {
                     activeTab={activeTab}
                     fileCount={
                       filteredFiles.filter(
-                        (f) => f.status === "queued" || f.status === "error"
+                        (f) => f.status === "queued" || f.status === "error",
                       ).length
                     }
                   />
@@ -668,12 +766,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-xs text-muted-foreground font-medium">
-              © {new Date().getFullYear()} ZeroMeta. &quot;Privacy Clean&quot; mode processes files entirely in your browser. &quot;Clean + Branding&quot; securely injects EXIF on our stateless edge servers. No files are retained.
+              © {new Date().getFullYear()} ZeroMeta. &quot;Privacy Clean&quot;
+              mode processes files entirely in your browser. &quot;Clean +
+              Branding&quot; securely injects EXIF on our stateless edge
+              servers. No files are retained.
             </p>
             <div className="flex items-center gap-3">
-              <Badge className="badge-neutral text-[10px]">
-                PWA Ready
-              </Badge>
+              <Badge className="badge-neutral text-[10px]">PWA Ready</Badge>
               <Badge className="badge-neutral text-[10px]">
                 No Data Stored
               </Badge>

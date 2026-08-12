@@ -20,8 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { formatFileSize } from "@/lib/utils";
-import type { MediaFile } from "@/lib/types";
+import { formatFileSize, calculateAspectRatio } from "@/lib/utils";
+import type { MediaFile, MetadataField } from "@/lib/types";
 
 // =============================================================================
 // FileCard Component
@@ -76,6 +76,8 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
   // Meanwhile, we support 'processedBlob' for backward compatibility with ImageFile.
   const processedSize = file.result?.blob.size ?? (file as any).processedBlob?.size;
   const processedBlobExists = !!file.result?.blob || !!(file as any).processedBlob;
+  // metadataAfter lives on ImageFile (legacy) or MediaFile.result
+  const metadataAfter: MetadataField[] | undefined = file.result?.metadataAfter ?? (file as any).metadataAfter;
 
   return (
     <div className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 file-card overflow-hidden group`}>
@@ -104,14 +106,41 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
             <h4 className="text-sm font-semibold text-foreground truncate" title={file.file.name}>
               {file.file.name}
             </h4>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+            <div className="flex items-center flex-wrap gap-2 text-xs text-muted-foreground mt-0.5">
               <span className="uppercase tracking-wider">{file.mediaType || "IMAGE"}</span>
               <span className="w-1 h-1 rounded-full bg-border" />
               <span>{formatFileSize(file.file.size)}</span>
               
+              {file.width && file.height && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-border hidden sm:block" />
+                  <span className="flex items-center gap-1">
+                    {file.width} &times; {file.height}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-border" />
+                  <span className="font-mono text-[10px] tracking-widest bg-muted px-1.5 py-0.5 rounded-sm">
+                    {calculateAspectRatio(file.width, file.height)}
+                  </span>
+                </>
+              )}
+
               {/* Show size reduction if completed */}
               {isDone && processedSize && (
                 <>
+                  <span className="w-1 h-1 rounded-full bg-border" />
+                  <span className="font-semibold text-primary">
+                    {(file as any).customName?.split('.').pop()?.toUpperCase() || "BIN"}
+                  </span>
+
+                  {metadataAfter?.find((m) => m.key === "Dimensions")?.value && (
+                    <>
+                      <span className="w-1 h-1 rounded-full bg-border" />
+                      <span className="text-muted-foreground">
+                        {metadataAfter.find((m) => m.key === "Dimensions")?.value}
+                      </span>
+                    </>
+                  )}
+
                   <span className="w-1 h-1 rounded-full bg-border" />
                   <span className={`font-medium flex items-center gap-1 ${processedSize < file.file.size ? "status-success" : "text-amber-500"}`}>
                     {formatFileSize(processedSize)}

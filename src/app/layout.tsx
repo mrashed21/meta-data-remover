@@ -5,7 +5,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
-// ─── Fonts ────────────────────────────────────────────────────────────────────
+// ─── Fonts
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,7 +14,7 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-// ─── Metadata ─────────────────────────────────────────────────────────────────
+// ─── Metadata
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mrashed21.me"),
@@ -70,7 +70,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
+// ─── Layout
 
 export default function RootLayout({
   children,

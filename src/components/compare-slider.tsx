@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
-import { motion } from "motion/react";
-import { GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GripVertical } from "lucide-react";
+import { motion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface CompareSliderProps {
   originalSrc: string;
@@ -21,7 +22,6 @@ export function CompareSlider({
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Track container width via ResizeObserver to avoid ref access during render
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -34,16 +34,13 @@ export function CompareSlider({
     return () => observer.disconnect();
   }, []);
 
-  const handleMove = useCallback(
-    (clientX: number) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-      setSliderPosition(percentage);
-    },
-    []
-  );
+  const handleMove = useCallback((clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderPosition(percentage);
+  }, []);
 
   const handleMouseDown = useCallback(() => {
     setIsDragging(true);
@@ -59,7 +56,7 @@ export function CompareSlider({
         handleMove(e.clientX);
       }
     },
-    [isDragging, handleMove]
+    [isDragging, handleMove],
   );
 
   const handleTouchMove = useCallback(
@@ -68,7 +65,7 @@ export function CompareSlider({
         handleMove(e.touches[0].clientX);
       }
     },
-    [isDragging, handleMove]
+    [isDragging, handleMove],
   );
 
   useEffect(() => {
@@ -86,23 +83,23 @@ export function CompareSlider({
     };
   }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        setSliderPosition((prev) => Math.max(0, prev - 2));
-      } else if (e.key === "ArrowRight") {
-        setSliderPosition((prev) => Math.min(100, prev + 2));
-      }
-    },
-    []
-  );
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      setSliderPosition((prev) => Math.max(0, prev - 2));
+    } else if (e.key === "ArrowRight") {
+      setSliderPosition((prev) => Math.min(100, prev + 2));
+    }
+  }, []);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className={cn("relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900", className)}
+      className={cn(
+        "relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900",
+        className,
+      )}
     >
       <div
         ref={containerRef}
@@ -123,8 +120,6 @@ export function CompareSlider({
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        {/* Processed (bottom layer - full) */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={processedSrc}
           alt="Processed"
@@ -132,12 +127,10 @@ export function CompareSlider({
           draggable={false}
         />
 
-        {/* Original (top layer - clipped) */}
         <div
           className="absolute inset-0 overflow-hidden"
           style={{ width: `${sliderPosition}%` }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={originalSrc}
             alt="Original"

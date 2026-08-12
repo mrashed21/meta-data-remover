@@ -1,24 +1,35 @@
 "use client";
 
-import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Settings2,
-  CheckCircle2,
-  Circle,
-  Shield,
-  ShieldCheck,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import type { ProcessingOptions } from "@/lib/types";
+import {
+  Check,
+  FileType,
   Image as ImageIcon,
-  Video,
+  ImagePlus,
+  Loader2,
+  Lock,
+  Maximize2,
   Music,
   Play,
-  Loader2,
-  Check,
+  Settings2,
+  Unlock,
+  Video,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import type { ProcessingOptions, PrivacyMode } from "@/lib/types";
+import { motion } from "motion/react";
 
 interface ControlPanelProps {
   options: ProcessingOptions;
@@ -39,17 +50,6 @@ export function ControlPanel({
   activeTab,
   fileCount,
 }: ControlPanelProps) {
-
-  const updatePrivacyMode = (mode: PrivacyMode) => {
-    // If branding is selected, we MUST use advanced mode (server-side)
-    // because fast mode (client canvas) cannot inject EXIF data.
-    onOptionsChange({
-      ...options,
-      privacyMode: mode,
-      mode: mode === "clean-branding" ? "advanced" : options.mode,
-    });
-  };
-
   const toggleOptimize = (enabled: boolean) => {
     onOptionsChange({
       ...options,
@@ -66,89 +66,305 @@ export function ControlPanel({
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="surface-glass">
-        <CardHeader className="pb-4">
+      <Card
+        className="surface-glass overflow-hidden flex flex-col"
+        style={{ maxHeight: "calc(100vh - 120px)" }}
+      >
+        <CardHeader className="pb-4 shrink-0">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Settings2 className="w-5 h-5 text-primary" />
             Processing Settings
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-6">
-          
-          {/* Privacy Modes */}
-          <div className="space-y-3">
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              Processing Mode
-            </Label>
-            <div className="grid gap-2" role="radiogroup" aria-label="Processing Mode">
-              <button
-                type="button"
-                role="radio"
-                aria-checked={options.privacyMode === "privacy-clean"}
-                onClick={() => updatePrivacyMode("privacy-clean")}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  options.privacyMode === "privacy-clean"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card/50 text-muted-foreground hover:border-zinc-600 hover:text-foreground"
-                }`}
-              >
-                {options.privacyMode === "privacy-clean" ? (
-                  <ShieldCheck className="w-5 h-5 shrink-0" />
-                ) : (
-                  <Shield className="w-5 h-5 shrink-0" />
-                )}
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">Privacy Clean</span>
-                  <span className="text-[10px] opacity-70">Strictly remove all identifying metadata</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                role="radio"
-                aria-checked={options.privacyMode === "clean-branding"}
-                onClick={() => updatePrivacyMode("clean-branding")}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  options.privacyMode === "clean-branding"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card/50 text-muted-foreground hover:border-zinc-600 hover:text-foreground"
-                }`}
-              >
-                {options.privacyMode === "clean-branding" ? (
-                  <Check className="w-5 h-5 shrink-0" />
-                ) : (
-                  <Circle className="w-5 h-5 shrink-0" />
-                )}
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">Clean + Branding</span>
-                  <span className="text-[10px] opacity-70">Remove metadata & inject Author/Creator tags</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
+        <CardContent className="flex-1 overflow-y-auto space-y-5 pb-0">
           {/* Image Settings */}
           {activeTab === "image" && (
             <>
               <Separator className="bg-border/50" />
-              <div className="space-y-3">
-              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-                <ImageIcon className="w-3.5 h-3.5" /> Image Rules
-              </Label>
-              <div className="space-y-2">
-                <ChecklistItem checked label="Remove EXIF" />
-                <ChecklistItem checked label="Remove GPS" />
-                <ChecklistItem checked label="Remove device info" />
-                <ChecklistItem checked label="Preserve dimensions" />
-                <ChecklistItem checked={!isOptimized} label="Preserve quality" />
-                <ChecklistItem 
-                  checked={isOptimized} 
-                  interactive 
-                  onChange={() => toggleOptimize(!isOptimized)}
-                  label="Optimize file size" 
-                />
+
+              {/* SPRINT 3-6: Resize Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <Maximize2 className="w-3.5 h-3.5" /> Resize Image
+                  </Label>
+                  <Switch
+                    checked={options.globalResize.enabled || false}
+                    onCheckedChange={(c) =>
+                      onOptionsChange({
+                        ...options,
+                        globalResize: { ...options.globalResize, enabled: c },
+                      })
+                    }
+                  />
+                </div>
+
+                {options.globalResize.enabled && (
+                  <div className="space-y-4 animate-in slide-in-from-top-2 fade-in duration-200">
+                    {/* Ratio Presets as button grid */}
+                    <div className="space-y-2">
+                      <Label className="text-[11px] text-muted-foreground">
+                        Aspect Ratio Preset
+                      </Label>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {(
+                          [
+                            { label: "Custom", value: "custom" },
+                            { label: "1:1", value: "1:1" },
+                            { label: "16:9", value: "16:9" },
+                            { label: "9:16", value: "9:16" },
+                          ] as const
+                        ).map(({ label, value }) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => {
+                              const cur = options.globalResize;
+                              let w = cur.width || 1920;
+                              let h = cur.height || 1080;
+                              if (value === "1:1") {
+                                h = w;
+                              }
+                              if (value === "16:9") {
+                                h = Math.round((w * 9) / 16);
+                              }
+                              if (value === "9:16") {
+                                h = Math.round((w * 16) / 9);
+                              }
+                              onOptionsChange({
+                                ...options,
+                                globalResize: {
+                                  ...cur,
+                                  preset: value,
+                                  width: w,
+                                  height: value === "custom" ? h : h,
+                                  maintainAspectRatio: value !== "custom",
+                                },
+                              });
+                            }}
+                            className={`h-9 rounded-md border text-xs font-medium transition-all ${
+                              options.globalResize.preset === value
+                                ? "border-primary bg-primary/15 text-primary"
+                                : "border-border bg-card/50 text-muted-foreground hover:border-zinc-600 hover:text-foreground"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Dimensions */}
+                    {options.globalResize.preset === "custom" && (
+                      <div className="flex items-center gap-3">
+                        <div className="space-y-2 flex-1">
+                          <Label className="text-[11px] text-muted-foreground">
+                            Width (px)
+                          </Label>
+                          <Input
+                            type="number"
+                            className="h-9 bg-card/50 font-mono text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            placeholder="Auto"
+                            min={1}
+                            onWheel={(e) => e.currentTarget.blur()}
+                            value={options.globalResize.width || ""}
+                            onChange={(e) => {
+                              const w = parseInt(e.target.value) || undefined;
+                              const cur = options.globalResize;
+                              let h = cur.height;
+                              if (
+                                w &&
+                                cur.maintainAspectRatio &&
+                                cur.width &&
+                                cur.height
+                              ) {
+                                h = Math.round((cur.height / cur.width) * w);
+                              }
+                              onOptionsChange({
+                                ...options,
+                                globalResize: { ...cur, width: w, height: h },
+                              });
+                            }}
+                          />
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={`mt-6 shrink-0 h-9 w-9 rounded-full ${options.globalResize.maintainAspectRatio ? "bg-primary/10 text-primary" : "text-muted-foreground"}`}
+                          onClick={() =>
+                            onOptionsChange({
+                              ...options,
+                              globalResize: {
+                                ...options.globalResize,
+                                maintainAspectRatio:
+                                  !options.globalResize.maintainAspectRatio,
+                              },
+                            })
+                          }
+                          title="Lock Aspect Ratio"
+                        >
+                          {options.globalResize.maintainAspectRatio ? (
+                            <Lock className="w-4 h-4" />
+                          ) : (
+                            <Unlock className="w-4 h-4" />
+                          )}
+                        </Button>
+
+                        <div className="space-y-2 flex-1">
+                          <Label className="text-[11px] text-muted-foreground">
+                            Height (px)
+                          </Label>
+                          <Input
+                            type="number"
+                            className="h-9 bg-card/50 font-mono text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            placeholder="Auto"
+                            min={1}
+                            onWheel={(e) => e.currentTarget.blur()}
+                            value={options.globalResize.height || ""}
+                            onChange={(e) => {
+                              const h = parseInt(e.target.value) || undefined;
+                              const cur = options.globalResize;
+                              let w = cur.width;
+                              if (
+                                h &&
+                                cur.maintainAspectRatio &&
+                                cur.width &&
+                                cur.height
+                              ) {
+                                w = Math.round((cur.width / cur.height) * h);
+                              }
+                              onOptionsChange({
+                                ...options,
+                                globalResize: { ...cur, width: w, height: h },
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mode */}
+                    <div className="space-y-2">
+                      <Label className="text-[11px] text-muted-foreground">
+                        Resize Mode
+                      </Label>
+                      <Select
+                        value={options.globalResize.mode || "fit"}
+                        onValueChange={(val: any) => {
+                          onOptionsChange({
+                            ...options,
+                            globalResize: {
+                              ...options.globalResize,
+                              mode: val,
+                            },
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="h-9 bg-card/50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="fit">
+                            Fit (Preserve ratio, fit inside)
+                          </SelectItem>
+                          <SelectItem value="fill">
+                            Fill (Preserve ratio, fill area)
+                          </SelectItem>
+                          <SelectItem value="crop">
+                            Crop (Crop excess area)
+                          </SelectItem>
+                          <SelectItem value="stretch">
+                            Stretch (Ignore ratio)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              <Separator className="bg-border/50" />
+
+              {/* SPRINT 7: Format Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <FileType className="w-3.5 h-3.5" /> Output Format
+                  </Label>
+                </div>
+                <Select
+                  value={options.format}
+                  onValueChange={(val: any) =>
+                    onOptionsChange({ ...options, format: val })
+                  }
+                >
+                  <SelectTrigger className="h-9 bg-card/50">
+                    <SelectValue placeholder="Select Format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="webp">WebP (Recommended)</SelectItem>
+                    <SelectItem value="jpeg">JPEG</SelectItem>
+                    <SelectItem value="png">PNG</SelectItem>
+                    <SelectItem value="avif">
+                      AVIF (Best compression)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator className="bg-border/50" />
+
+              {/* SPRINT 8: Quality Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <ImagePlus className="w-3.5 h-3.5" /> Quality:{" "}
+                    {options.quality}%
+                  </Label>
+                </div>
+                <div className="space-y-3 pt-1 animate-in slide-in-from-top-2 fade-in duration-200">
+                  <Slider
+                    value={[options.quality]}
+                    min={1}
+                    max={100}
+                    step={1}
+                    onValueChange={([val]) =>
+                      onOptionsChange({ ...options, quality: val })
+                    }
+                  />
+                  {options.quality < 50 && (
+                    <p className="text-[11px] text-amber-500/90 leading-tight">
+                      Warning: Quality below 50% may result in noticeable
+                      artifacts and blurriness.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <Separator className="bg-border/50" />
+
+              {/* SPRINT 9: Metadata & Optimization (Existing) */}
+              <div className="space-y-3">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5" /> Metadata & Optimization
+                </Label>
+                <div className="space-y-2">
+                  <ChecklistItem checked label="Remove EXIF" />
+                  <ChecklistItem checked label="Remove GPS" />
+                  <ChecklistItem checked label="Remove device info" />
+                  <ChecklistItem
+                    checked={!isOptimized}
+                    label="Preserve quality"
+                  />
+                  <ChecklistItem
+                    checked={isOptimized}
+                    interactive
+                    onChange={() => toggleOptimize(!isOptimized)}
+                    label="Optimize file size"
+                  />
+                </div>
               </div>
             </>
           )}
@@ -158,20 +374,20 @@ export function ControlPanel({
             <>
               <Separator className="bg-border/50" />
               <div className="space-y-3">
-              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-                <Video className="w-3.5 h-3.5" /> Video Rules
-              </Label>
-              <div className="space-y-2">
-                <ChecklistItem checked label="Remove metadata" />
-                <ChecklistItem checked label="Preserve resolution" />
-                <ChecklistItem checked label="Preserve audio" />
-                <ChecklistItem 
-                  checked={isOptimized} 
-                  interactive 
-                  onChange={() => toggleOptimize(!isOptimized)}
-                  label="Optimize file size" 
-                />
-              </div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                  <Video className="w-3.5 h-3.5" /> Video Rules
+                </Label>
+                <div className="space-y-2">
+                  <ChecklistItem checked label="Remove metadata" />
+                  <ChecklistItem checked label="Preserve resolution" />
+                  <ChecklistItem checked label="Preserve audio" />
+                  <ChecklistItem
+                    checked={isOptimized}
+                    interactive
+                    onChange={() => toggleOptimize(!isOptimized)}
+                    label="Optimize file size"
+                  />
+                </div>
               </div>
             </>
           )}
@@ -181,26 +397,26 @@ export function ControlPanel({
             <>
               <Separator className="bg-border/50" />
               <div className="space-y-3">
-              <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
-                <Music className="w-3.5 h-3.5" /> Audio Rules
-              </Label>
-              <div className="space-y-2">
-                <ChecklistItem checked label="Remove metadata" />
-                <ChecklistItem checked label="Preserve audio quality" />
-                <ChecklistItem 
-                  checked={isOptimized} 
-                  interactive 
-                  onChange={() => toggleOptimize(!isOptimized)}
-                  label="Optimize file size" 
-                />
-              </div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1.5">
+                  <Music className="w-3.5 h-3.5" /> Audio Rules
+                </Label>
+                <div className="space-y-2">
+                  <ChecklistItem checked label="Remove metadata" />
+                  <ChecklistItem checked label="Preserve audio quality" />
+                  <ChecklistItem
+                    checked={isOptimized}
+                    interactive
+                    onChange={() => toggleOptimize(!isOptimized)}
+                    label="Optimize file size"
+                  />
+                </div>
               </div>
             </>
           )}
+        </CardContent>
 
-          <Separator className="bg-border/50" />
-
-          {/* Process Button */}
+        {/* ── Sticky Process Button — always visible ── */}
+        <div className="shrink-0 px-6 py-4 border-t border-border/50 bg-card/80 backdrop-blur-sm">
           {isProcessing ? (
             <Button
               className="w-full h-12 btn-secondary bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 hover:border-destructive/30"
@@ -216,22 +432,25 @@ export function ControlPanel({
               disabled={fileCount === 0}
             >
               <Play className="w-4 h-4 mr-2" fill="currentColor" />
-              PROCESS {fileCount > 0 ? `${fileCount} FILE${fileCount > 1 ? "S" : ""}` : ""}
+              PROCESS{" "}
+              {fileCount > 0
+                ? `${fileCount} FILE${fileCount > 1 ? "S" : ""}`
+                : ""}
             </Button>
           )}
-        </CardContent>
+        </div>
       </Card>
     </motion.div>
   );
 }
 
-function ChecklistItem({ 
-  checked, 
-  label, 
+function ChecklistItem({
+  checked,
+  label,
   interactive,
-  onChange 
-}: { 
-  checked: boolean; 
+  onChange,
+}: {
+  checked: boolean;
   label: string;
   interactive?: boolean;
   onChange?: () => void;
@@ -248,17 +467,21 @@ function ChecklistItem({
         interactive ? "cursor-pointer select-none group" : "opacity-80"
       }`}
     >
-      <div 
+      <div
         className={`flex items-center justify-center w-4 h-4 rounded-sm border transition-colors shrink-0 ${
-          checked 
-            ? "bg-primary border-primary text-primary-foreground" 
+          checked
+            ? "bg-primary border-primary text-primary-foreground"
             : "border-muted-foreground/30 bg-transparent group-hover:border-muted-foreground/50"
         }`}
         aria-hidden="true"
       >
-        {checked && <Check className="w-3 h-3 stroke-[3]" />}
+        {checked && <Check className="w-3 h-3 stroke-3" />}
       </div>
-      <span className={checked ? "text-foreground font-medium" : "text-muted-foreground"}>
+      <span
+        className={
+          checked ? "text-foreground font-medium" : "text-muted-foreground"
+        }
+      >
         {label}
       </span>
     </Component>

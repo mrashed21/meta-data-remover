@@ -1,63 +1,77 @@
-/**
- * media-types.ts
- *
- * Shared runtime support for the type architecture defined in types.ts.
- * Provides:
- *   - MIME type registry (image / video / audio)
- *   - Type guard helpers
- *   - MediaFile and ProcessingError factory functions
- *   - Per-media-type file size limits
- *
- * Used by: upload system, validators, API routes, processing pipeline.
- */
-
 import type {
-  MediaType,
-  MediaFile,
   FileStatus,
+  MediaFile,
+  MediaType,
   MetadataField,
-  SupportedMimeType,
   ProcessingError,
   ProcessingErrorCode,
+  SupportedMimeType,
 } from "./types";
 import { generateId } from "./utils";
 
-// =============================================================================
-// File size limits
-// =============================================================================
-
 /** Maximum allowed file size per media type (bytes) */
 export const MAX_FILE_SIZE: Record<MediaType, number> = {
-  image: 50 * 1024 * 1024,   // 50 MB
-  video: 500 * 1024 * 1024,  // 500 MB
-  audio: 100 * 1024 * 1024,  // 100 MB
+  image: 50 * 1024 * 1024, // 50 MB
+  video: 500 * 1024 * 1024, // 500 MB
+  audio: 100 * 1024 * 1024, // 100 MB
 };
 
-// =============================================================================
-// MIME type registry
-// =============================================================================
-
 export const SUPPORTED_IMAGE_TYPES: SupportedMimeType[] = [
-  { mime: "image/jpeg", mediaType: "image", extensions: [".jpg", ".jpeg"], label: "JPEG" },
-  { mime: "image/png",  mediaType: "image", extensions: [".png"],          label: "PNG"  },
-  { mime: "image/webp", mediaType: "image", extensions: [".webp"],         label: "WebP" },
-  { mime: "image/gif",  mediaType: "image", extensions: [".gif"],          label: "GIF"  },
+  {
+    mime: "image/jpeg",
+    mediaType: "image",
+    extensions: [".jpg", ".jpeg"],
+    label: "JPEG",
+  },
+  { mime: "image/png", mediaType: "image", extensions: [".png"], label: "PNG" },
+  {
+    mime: "image/webp",
+    mediaType: "image",
+    extensions: [".webp"],
+    label: "WebP",
+  },
+  { mime: "image/gif", mediaType: "image", extensions: [".gif"], label: "GIF" },
 ];
 
 export const SUPPORTED_VIDEO_TYPES: SupportedMimeType[] = [
-  { mime: "video/mp4",          mediaType: "video", extensions: [".mp4"],  label: "MP4"  },
-  { mime: "video/quicktime",    mediaType: "video", extensions: [".mov"],  label: "MOV"  },
-  { mime: "video/webm",         mediaType: "video", extensions: [".webm"], label: "WebM" },
-  { mime: "video/x-matroska",   mediaType: "video", extensions: [".mkv"],  label: "MKV"  },
+  { mime: "video/mp4", mediaType: "video", extensions: [".mp4"], label: "MP4" },
+  {
+    mime: "video/quicktime",
+    mediaType: "video",
+    extensions: [".mov"],
+    label: "MOV",
+  },
+  {
+    mime: "video/webm",
+    mediaType: "video",
+    extensions: [".webm"],
+    label: "WebM",
+  },
+  {
+    mime: "video/x-matroska",
+    mediaType: "video",
+    extensions: [".mkv"],
+    label: "MKV",
+  },
 ];
 
 export const SUPPORTED_AUDIO_TYPES: SupportedMimeType[] = [
-  { mime: "audio/mpeg",         mediaType: "audio", extensions: [".mp3"],  label: "MP3"  },
-  { mime: "audio/wav",          mediaType: "audio", extensions: [".wav"],  label: "WAV"  },
-  { mime: "audio/mp4",          mediaType: "audio", extensions: [".m4a"],  label: "M4A"  },
-  { mime: "audio/aac",          mediaType: "audio", extensions: [".aac"],  label: "AAC"  },
-  { mime: "audio/flac",         mediaType: "audio", extensions: [".flac"], label: "FLAC" },
-  { mime: "audio/ogg",          mediaType: "audio", extensions: [".ogg"],  label: "OGG"  },
+  {
+    mime: "audio/mpeg",
+    mediaType: "audio",
+    extensions: [".mp3"],
+    label: "MP3",
+  },
+  { mime: "audio/wav", mediaType: "audio", extensions: [".wav"], label: "WAV" },
+  { mime: "audio/mp4", mediaType: "audio", extensions: [".m4a"], label: "M4A" },
+  { mime: "audio/aac", mediaType: "audio", extensions: [".aac"], label: "AAC" },
+  {
+    mime: "audio/flac",
+    mediaType: "audio",
+    extensions: [".flac"],
+    label: "FLAC",
+  },
+  { mime: "audio/ogg", mediaType: "audio", extensions: [".ogg"], label: "OGG" },
 ];
 
 /** Flat registry of all supported media types */
@@ -69,17 +83,9 @@ export const ALL_SUPPORTED_TYPES: SupportedMimeType[] = [
 
 /** Fast lookup map: mime → SupportedMimeType */
 const MIME_MAP = new Map<string, SupportedMimeType>(
-  ALL_SUPPORTED_TYPES.map((t) => [t.mime, t])
+  ALL_SUPPORTED_TYPES.map((t) => [t.mime, t]),
 );
 
-// =============================================================================
-// Type guards and lookups
-// =============================================================================
-
-/**
- * Determine media type from a File object.
- * Returns null if the MIME type is not in the supported registry.
- */
 export function getMediaType(file: File): MediaType | null {
   const entry = MIME_MAP.get(file.type);
   return entry?.mediaType ?? null;
@@ -105,25 +111,16 @@ export function isNonEmptyFile(file: File): boolean {
   return file.size > 0;
 }
 
-// =============================================================================
-// Factory functions
-// =============================================================================
-
-/**
- * Create a new MediaFile queue entry from a browser File object.
- * Sets status to "queued" and progress to 0.
- * The caller is responsible for generating and attaching the preview URL.
- */
 export function createMediaFile(
   file: File,
   mediaType: MediaType,
-  metadataBefore: MetadataField[] = []
+  metadataBefore: MetadataField[] = [],
 ): MediaFile {
   return {
     id: generateId(),
     file,
     mediaType,
-    preview: null,     // caller sets this after URL.createObjectURL
+    preview: null, // caller sets this after URL.createObjectURL
     status: "queued" as FileStatus,
     progress: 0,
     result: null,
@@ -131,21 +128,13 @@ export function createMediaFile(
   };
 }
 
-/**
- * Create a typed ProcessingError.
- * `message` is user-facing. `technical` is for console/debug only.
- */
 export function createProcessingError(
   code: ProcessingErrorCode,
   message: string,
-  technical?: string
+  technical?: string,
 ): ProcessingError {
   return { code, message, technical };
 }
-
-// =============================================================================
-// Human-readable helpers
-// =============================================================================
 
 /** Format a file size in bytes to a human-readable string (KB / MB / GB). */
 export function formatBytes(bytes: number): string {

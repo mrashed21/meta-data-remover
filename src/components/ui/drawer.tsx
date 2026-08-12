@@ -1,26 +1,14 @@
 "use client";
 
-/**
- * drawer.tsx
- *
- * Bottom-sheet / side-panel drawer built on Radix Dialog.
- * Slides in from bottom (mobile default) or right (desktop default).
- * Accessible: focus-trap, scroll-lock, Escape key close.
- */
-
-import * as React from "react";
-import { Dialog as DialogPrimitive } from "radix-ui";
-import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import { Dialog as DialogPrimitive } from "radix-ui";
+import * as React from "react";
 
-const Drawer            = DialogPrimitive.Root;
-const DrawerTrigger     = DialogPrimitive.Trigger;
-const DrawerClose       = DialogPrimitive.Close;
-const DrawerPortal      = DialogPrimitive.Portal;
-
-// =============================================================================
-// Overlay
-// =============================================================================
+const Drawer = DialogPrimitive.Root;
+const DrawerTrigger = DialogPrimitive.Trigger;
+const DrawerClose = DialogPrimitive.Close;
+const DrawerPortal = DialogPrimitive.Portal;
 
 const DrawerOverlay = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Overlay>,
@@ -32,16 +20,12 @@ const DrawerOverlay = React.forwardRef<
       "fixed inset-0 z-50 bg-black/70 backdrop-blur-sm",
       "data-[state=open]:animate-in  data-[state=open]:fade-in-0",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
-      className
+      className,
     )}
     {...props}
   />
 ));
 DrawerOverlay.displayName = "DrawerOverlay";
-
-// =============================================================================
-// Content — side or bottom
-// =============================================================================
 
 type DrawerSide = "bottom" | "right" | "left" | "top";
 
@@ -68,8 +52,9 @@ const sideClasses: Record<DrawerSide, string> = {
   ].join(" "),
 };
 
-interface DrawerContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+interface DrawerContentProps extends React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Content
+> {
   side?: DrawerSide;
   hideClose?: boolean;
 }
@@ -77,65 +62,76 @@ interface DrawerContentProps
 const DrawerContent = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
   DrawerContentProps
->(({ className, children, side = "bottom", hideClose = false, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        // Base surface
-        "bg-card border border-border shadow-2xl shadow-black/50",
-        "flex flex-col overflow-hidden",
-        // Animation base
-        "duration-300",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out",
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        // Side-specific positioning
-        sideClasses[side],
-        className
-      )}
-      {...props}
-    >
-      {/* Handle grip (bottom/top drawers) */}
-      {(side === "bottom" || side === "top") && (
-        <div className="flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-        </div>
-      )}
+>(
+  (
+    { className, children, side = "bottom", hideClose = false, ...props },
+    ref,
+  ) => (
+    <DrawerPortal>
+      <DrawerOverlay />
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "bg-card border border-border shadow-2xl shadow-black/50",
+          "flex flex-col overflow-hidden",
 
-      {children}
+          "duration-300",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
 
-      {!hideClose && (
-        <DialogPrimitive.Close
-          className={cn(
-            "absolute right-4 top-4 rounded-md p-1",
-            "text-muted-foreground opacity-70",
-            "ring-offset-background transition-opacity",
-            "hover:opacity-100 hover:text-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-          )}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      )}
-    </DialogPrimitive.Content>
-  </DrawerPortal>
-));
+          sideClasses[side],
+          className,
+        )}
+        {...props}
+      >
+        {(side === "bottom" || side === "top") && (
+          <div className="flex justify-center pt-3 pb-1 shrink-0">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          </div>
+        )}
+
+        {children}
+
+        {!hideClose && (
+          <DialogPrimitive.Close
+            className={cn(
+              "absolute right-4 top-4 rounded-md p-1",
+              "text-muted-foreground opacity-70",
+              "ring-offset-background transition-opacity",
+              "hover:opacity-100 hover:text-foreground",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            )}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Content>
+    </DrawerPortal>
+  ),
+);
 DrawerContent.displayName = "DrawerContent";
 
-// =============================================================================
-// Sub-components
-// =============================================================================
-
-const DrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col gap-1.5 px-5 pt-4 pb-2 shrink-0", className)} {...props} />
+const DrawerHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("flex flex-col gap-1.5 px-5 pt-4 pb-2 shrink-0", className)}
+    {...props}
+  />
 );
 DrawerHeader.displayName = "DrawerHeader";
 
-const DrawerFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+const DrawerFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("flex flex-col gap-2 px-5 py-4 border-t border-border shrink-0", className)}
+    className={cn(
+      "flex flex-col gap-2 px-5 py-4 border-t border-border shrink-0",
+      className,
+    )}
     {...props}
   />
 );
@@ -147,7 +143,10 @@ const DrawerTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold leading-tight tracking-tight text-foreground", className)}
+    className={cn(
+      "text-lg font-semibold leading-tight tracking-tight text-foreground",
+      className,
+    )}
     {...props}
   />
 ));
@@ -165,22 +164,27 @@ const DrawerDescription = React.forwardRef<
 ));
 DrawerDescription.displayName = "DrawerDescription";
 
-/** Scrollable body area — flex-1 so it fills remaining drawer height */
-const DrawerBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex-1 overflow-y-auto px-5 py-3", className)} {...props} />
+const DrawerBody = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("flex-1 overflow-y-auto px-5 py-3", className)}
+    {...props}
+  />
 );
 DrawerBody.displayName = "DrawerBody";
 
 export {
   Drawer,
-  DrawerTrigger,
-  DrawerClose,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerFooter,
-  DrawerTitle,
-  DrawerDescription,
   DrawerBody,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
 };

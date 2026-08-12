@@ -1,16 +1,16 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { EmptyQueue } from "@/components/ui/empty-state";
+import { useToast } from "@/components/ui/toast";
+import { ALL_SUPPORTED_TYPES } from "@/lib/media-types";
+import type { MediaFile } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { validateBatch } from "@/lib/validators";
+import { ImagePlus, Trash2, Upload, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { motion, AnimatePresence } from "motion/react";
-import { Upload, ImagePlus, X, FileImage, FileVideo, FileAudio, Edit2, Trash2 } from "lucide-react";
-import { cn, formatFileSize } from "@/lib/utils";
-import { ALL_SUPPORTED_TYPES, getMediaType } from "@/lib/media-types";
-import { validateBatch } from "@/lib/validators";
-import type { MediaFile } from "@/lib/types";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
-import { EmptyQueue } from "@/components/ui/empty-state";
 
 interface UniversalUploaderProps {
   files: MediaFile[];
@@ -35,7 +35,6 @@ export function UniversalUploader({
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: any[]) => {
-      // Handle file rejections from react-dropzone (e.g. wrong mime type generally)
       if (fileRejections.length > 0) {
         toast({
           title: "Invalid files detected",
@@ -46,21 +45,20 @@ export function UniversalUploader({
 
       if (acceptedFiles.length === 0) return;
 
-      // Run our strict universal validation (size limits per type, exact extensions, dupes)
       const { valid, errors } = validateBatch(acceptedFiles, files);
 
-      // Show errors as toasts
       errors.forEach(({ file, error }) => {
         toast({
-          title: error.code === "UNSUPPORTED_FILE" && error.message.includes("already in the queue") 
-            ? "Duplicate file" 
-            : "Upload failed",
+          title:
+            error.code === "UNSUPPORTED_FILE" &&
+            error.message.includes("already in the queue")
+              ? "Duplicate file"
+              : "Upload failed",
           description: error.message,
           variant: "error",
         });
       });
 
-      // Pass valid files to parent
       if (valid.length > 0) {
         onFilesAdded(valid);
         toast({
@@ -70,19 +68,21 @@ export function UniversalUploader({
         });
       }
     },
-    [files, onFilesAdded, toast]
+    [files, onFilesAdded, toast],
   );
 
-  // Construct accept object for react-dropzone from our registry based on allowedType
-  const acceptRegistry = ALL_SUPPORTED_TYPES
-    .filter(type => type.mediaType === allowedType)
-    .reduce((acc, curr) => {
+  const acceptRegistry = ALL_SUPPORTED_TYPES.filter(
+    (type) => type.mediaType === allowedType,
+  ).reduce(
+    (acc, curr) => {
       if (!acc[curr.mime]) {
         acc[curr.mime] = [];
       }
       acc[curr.mime].push(...curr.extensions);
       return acc;
-    }, {} as Record<string, string[]>);
+    },
+    {} as Record<string, string[]>,
+  );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, open } =
     useDropzone({
@@ -90,25 +90,32 @@ export function UniversalUploader({
       accept: acceptRegistry,
       disabled,
       multiple: true,
-      noClick: files.length > 0, // Disable click to upload if we already have files (use dedicated button instead)
+      noClick: files.length > 0,
     });
 
   return (
     <div className="space-y-6">
-      {/* ─── Dropzone Area ──────────────────────────────────────────────────────── */}
+      {/* ─── Dropzone Area  */}
       <motion.div
-        whileHover={!disabled && files.length === 0 ? { scale: 1.005 } : undefined}
-        whileTap={!disabled && files.length === 0 ? { scale: 0.995 } : undefined}
+        whileHover={
+          !disabled && files.length === 0 ? { scale: 1.005 } : undefined
+        }
+        whileTap={
+          !disabled && files.length === 0 ? { scale: 0.995 } : undefined
+        }
       >
         <div
           {...getRootProps()}
           className={cn(
             "relative transition-all duration-300 group overflow-hidden",
-            files.length === 0 ? "p-8 sm:p-16 text-center cursor-pointer" : "p-4 sm:p-6 rounded-2xl",
+            files.length === 0
+              ? "p-8 sm:p-16 text-center cursor-pointer"
+              : "p-4 sm:p-6 rounded-2xl",
             isDragActive && !isDragReject && "dropzone-active scale-[1.01]",
-            isDragReject && "border-destructive border-dashed bg-destructive/10 rounded-2xl",
+            isDragReject &&
+              "border-destructive border-dashed bg-destructive/10 rounded-2xl",
             !isDragActive && !isDragReject && "dropzone",
-            disabled && "opacity-50 cursor-not-allowed"
+            disabled && "opacity-50 cursor-not-allowed",
           )}
         >
           <input {...getInputProps()} />
@@ -117,7 +124,7 @@ export function UniversalUploader({
           <div
             className={cn(
               "absolute inset-0 opacity-0 transition-opacity duration-500",
-              isDragActive && "opacity-100"
+              isDragActive && "opacity-100",
             )}
           >
             <div className="absolute inset-0 bg-[rgba(228,199,170,0.02)]" />
@@ -184,10 +191,21 @@ export function UniversalUploader({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={open} disabled={disabled}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={open}
+                    disabled={disabled}
+                  >
                     Browse Files
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={onClearAll} className="text-destructive hover:text-destructive hover:bg-destructive/10" disabled={disabled || files.length === 0}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClearAll}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    disabled={disabled || files.length === 0}
+                  >
                     <Trash2 className="w-4 h-4 mr-1.5" />
                     Clear All
                   </Button>
@@ -197,7 +215,6 @@ export function UniversalUploader({
           </div>
         </div>
       </motion.div>
-
     </div>
   );
 }

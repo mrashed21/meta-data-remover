@@ -1,105 +1,51 @@
-/**
- * metadata-config.ts
- *
- * Central configuration for metadata processing.
- *
- * Contains:
- *  - Default processing options for image / video / audio
- *  - Default branding configuration (mrashed21 / Muhammad Rashed)
- *  - EXIF field category mappings
- *  - Known metadata tags to strip per media type
- *
- * Sprint 10 will use DEFAULT_BRANDING_CONFIG for Mode B injection.
- * Sprint 12 settings UI will use DEFAULT_*_OPTIONS as initial state.
- */
-
 import type {
+  AudioProcessingOptions,
   BrandingConfig,
   ImageProcessingOptions,
-  VideoProcessingOptions,
-  AudioProcessingOptions,
   PrivacyMode,
+  VideoProcessingOptions,
 } from "./types";
-
-// =============================================================================
-// Privacy mode defaults
-// =============================================================================
 
 /** The default privacy mode on first load */
 export const DEFAULT_PRIVACY_MODE: PrivacyMode = "privacy-clean";
 
-// =============================================================================
-// Branding configuration — Mode B (Sprint 10)
-// =============================================================================
-
-/**
- * Default branding metadata injected when Mode B ("clean-branding") is active.
- * These fields are added to the output file's metadata after stripping.
- *
- * Source: Muhammad Rashed / mrashed21 developer identity.
- * Per plan.md Sprint 10 requirements.
- */
 export const DEFAULT_BRANDING_CONFIG: BrandingConfig = {
-  creator:  "Muhammad Rashed",
-  author:   "Muhammad Rashed",
+  creator: "Muhammad Rashed",
+  author: "Muhammad Rashed",
   software: "ZeroMeta",
   keywords: ["mrashed21", "muhammad rashed"],
 };
 
-// =============================================================================
-// Default processing options per media type
-// =============================================================================
-
-/**
- * Default image processing options.
- * All privacy-protective flags are ON by default.
- * Lossy operations (colorShift, noiseInjection) are OFF by default.
- * Dimensions are preserved — NEVER silently downscaled.
- */
 export const DEFAULT_IMAGE_OPTIONS: ImageProcessingOptions = {
-  removeExif:           true,
-  removeGps:            true,
-  removeIptc:           true,
-  removeXmp:            true,
-  preserveOrientation:  true,   // rotate correctly, strip Orientation tag
-  preserveDimensions:   true,   // CRITICAL: never downscale
-  outputFormat:         "jpeg",
-  outputQuality:        95,     // high quality; no silent lossy compression
-  microCrop:            0,      // disabled by default
-  colorShift:           0,      // disabled by default
-  noiseInjection:       0,      // disabled by default
+  removeExif: true,
+  removeGps: true,
+  removeIptc: true,
+  removeXmp: true,
+  preserveOrientation: true,
+  preserveDimensions: true,
+  outputFormat: "jpeg",
+  outputQuality: 95,
+  microCrop: 0,
+  colorShift: 0,
+  noiseInjection: 0,
 };
 
-/**
- * Default video processing options.
- * Remux (stream-copy) is always preferred over re-encode.
- * Per plan.md Sprint 08: "remux / stream-copy first".
- */
 export const DEFAULT_VIDEO_OPTIONS: VideoProcessingOptions = {
-  removeMetadata:    true,
+  removeMetadata: true,
   preserveResolution: true,
-  preserveAudio:     true,
-  forceReencode:     false,  // remux first; only re-encode when necessary
+  preserveAudio: true,
+  forceReencode: false,
 };
 
-/**
- * Default audio processing options.
- * All ID3/metadata fields are stripped by default.
- * Audio quality (codec, bitrate, sample rate) is preserved.
- */
 export const DEFAULT_AUDIO_OPTIONS: AudioProcessingOptions = {
-  removeId3Tags:        true,
-  removeArtist:         true,
-  removeAlbum:          true,
-  removeTitle:          true,
-  removeComment:        true,
-  removeEncoder:        true,
+  removeId3Tags: true,
+  removeArtist: true,
+  removeAlbum: true,
+  removeTitle: true,
+  removeComment: true,
+  removeEncoder: true,
   preserveAudioQuality: true,
 };
-
-// =============================================================================
-// EXIF field category mappings
-// =============================================================================
 
 /** EXIF / IPTC / XMP tags that reveal GPS / location data */
 export const GPS_TAGS = new Set([
@@ -228,10 +174,10 @@ export const ID3_TAGS_TO_STRIP = [
   "description",
   "grouping",
   "lyrics",
-  "TXXX",  // custom text frames
-  "COMM",  // comments
-  "USLT",  // unsynchronized lyrics
-  "APIC",  // attached picture (cover art removes identity data)
+  "TXXX",
+  "COMM",
+  "USLT",
+  "APIC",
 ] as const;
 
 /** Video metadata keys to strip (FFmpeg tag names) */
@@ -254,24 +200,34 @@ export const VIDEO_METADATA_KEYS_TO_STRIP = [
   "com.apple.quicktime.creationdate",
 ] as const;
 
-// =============================================================================
-// Metadata field category helper
-// =============================================================================
+export type MetadataCategory =
+  | "camera"
+  | "location"
+  | "ai"
+  | "software"
+  | "other";
 
-export type MetadataCategory = "camera" | "location" | "ai" | "software" | "other";
-
-/**
- * Determine the display category for a metadata field key.
- * Used by the metadata inspector to colour-code fields.
- */
 export function categorizeMetadataField(key: string): MetadataCategory {
-  if (GPS_TAGS.has(key) || key.toLowerCase().includes("gps") || key.toLowerCase().includes("location")) {
+  if (
+    GPS_TAGS.has(key) ||
+    key.toLowerCase().includes("gps") ||
+    key.toLowerCase().includes("location")
+  ) {
     return "location";
   }
-  if (AI_TAGS.has(key) || key.toLowerCase().includes("ai") || key.toLowerCase().includes("synthid") || key.toLowerCase().includes("c2pa")) {
+  if (
+    AI_TAGS.has(key) ||
+    key.toLowerCase().includes("ai") ||
+    key.toLowerCase().includes("synthid") ||
+    key.toLowerCase().includes("c2pa")
+  ) {
     return "ai";
   }
-  if (SOFTWARE_TAGS.has(key) || key.toLowerCase().includes("software") || key.toLowerCase().includes("tool")) {
+  if (
+    SOFTWARE_TAGS.has(key) ||
+    key.toLowerCase().includes("software") ||
+    key.toLowerCase().includes("tool")
+  ) {
     return "software";
   }
   if (CAMERA_TAGS.has(key)) {

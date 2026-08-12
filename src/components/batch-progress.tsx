@@ -1,25 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  Download,
-  Archive,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  Loader2,
-  FileImage,
-  Eye,
-  Edit2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { formatFileSize } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 import type { ImageFile } from "@/lib/types";
+import { formatFileSize } from "@/lib/utils";
+import {
+  AlertCircle,
+  Archive,
+  CheckCircle2,
+  Clock,
+  Download,
+  Edit2,
+  Eye,
+  FileImage,
+  Loader2,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 
 interface BatchProgressProps {
   files: ImageFile[];
@@ -161,16 +161,27 @@ export function BatchProgress({
                         />
                       ) : (
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <p className="text-sm text-foreground truncate cursor-pointer hover:underline" onClick={() => {
-                            setEditingNameId(file.id);
-                            setEditNameValue(file.customName || file.file.name);
-                          }} title="Click to rename">
+                          <p
+                            className="text-sm text-foreground truncate cursor-pointer hover:underline"
+                            onClick={() => {
+                              setEditingNameId(file.id);
+                              setEditNameValue(
+                                file.customName || file.file.name,
+                              );
+                            }}
+                            title="Click to rename"
+                          >
                             {file.customName || file.file.name}
                           </p>
-                          <button onClick={() => {
-                            setEditingNameId(file.id);
-                            setEditNameValue(file.customName || file.file.name);
-                          }} className="text-muted-foreground hover:text-foreground">
+                          <button
+                            onClick={() => {
+                              setEditingNameId(file.id);
+                              setEditNameValue(
+                                file.customName || file.file.name,
+                              );
+                            }}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
                             <Edit2 className="w-3 h-3" />
                           </button>
                         </div>
@@ -189,7 +200,9 @@ export function BatchProgress({
                       </span>
                       {file.status === "done" && file.processedBlob && (
                         <>
-                          <span className="text-[10px] text-muted-foreground">→</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            →
+                          </span>
                           <span className="text-[10px] text-emerald-500">
                             {formatFileSize(file.processedBlob.size)}
                           </span>
