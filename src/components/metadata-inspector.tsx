@@ -1,17 +1,17 @@
 "use client";
 
-import { motion } from "motion/react";
-import { FileSearch, ShieldCheck, ShieldAlert, MapPin, Camera, Cpu, Code } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { MetadataField } from "@/lib/types";
+import { Camera, Code, Cpu, FileSearch, MapPin, ShieldAlert, ShieldCheck } from "lucide-react";
+import { motion } from "motion/react";
 
 interface MetadataInspectorProps {
   open: boolean;

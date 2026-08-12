@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { handleEmailClick } from "@/lib/utils";
 
 export function LandingSections() {
   return (
@@ -266,9 +267,8 @@ export function LandingSections() {
             
             <div className="flex flex-wrap items-center justify-center gap-4 pt-6 w-full">
               <a
-                href={`mailto:rashedjaman768@gmail.com?subject=${encodeURIComponent("ZeroMeta Feedback")}&body=${encodeURIComponent("Hi Muhammad Rashed,\n\nI have some feedback regarding ZeroMeta:\n\n")}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => handleEmailClick(e, "rashedjaman768@gmail.com", "ZeroMeta Feedback", "Hi Muhammad Rashed,\n\nI have some feedback regarding ZeroMeta:\n\n")}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
               >
                 <Mail className="w-4 h-4" />

@@ -78,3 +78,29 @@ export function calculateAspectRatio(width: number, height: number): string {
   }
   return `${width / divisor}:${height / divisor}`;
 }
+
+export function handleEmailClick(
+  e: { preventDefault: () => void },
+  email: string,
+  subject: string,
+  body: string
+) {
+  e.preventDefault();
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
+  if (isMobile) {
+    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+    return;
+  }
+
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+    email
+  )}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(gmailUrl, "_blank", "noopener,noreferrer");
+}
