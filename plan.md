@@ -159,7 +159,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] Shared types create
 * [x] File validation utility
 * [x] Error handling strategy
-* [ ] Processing status model
+* [x] Processing status model
 * [ ] Download utility
 * [ ] Filename generator
 * [ ] Metadata configuration
