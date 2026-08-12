@@ -164,7 +164,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] Filename generator
 * [x] Metadata configuration
 * [x] Environment variables cleanup
-* [ ] Constants structure
+* [x] Constants structure
 
 ### Test
 
@@ -172,7 +172,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * Lint
 * Production build
 
-**Gate:** সব pass না করলে Sprint 02 নয়।
+**Gate:** ✅ PASSED — npm run lint (0 errors), npm run build (TypeScript ✓, all pages ✓)
 
 ### Sprint 01 Task 1 Progress Record
 
@@ -225,7 +225,7 @@ Existing UI-এর উপর professional design system তৈরি করা�
 
 ### Tasks
 
-* [ ] Global spacing system
+* [x] Global spacing system
 * [ ] Typography hierarchy
 * [ ] Button component
 * [ ] Card component
