@@ -228,13 +228,13 @@ Existing UI-এর উপর professional design system তৈরি করা�
 * [x] Global spacing system
 * [x] Typography hierarchy
 * [x] Button component
-* [ ] Card component
-* [ ] Badge component
-* [ ] Progress component
-* [ ] Modal/Drawer component
-* [ ] Toast/error component
-* [ ] Loading state
-* [ ] Empty state
+* [x] Card component
+* [x] Badge component
+* [x] Progress component
+* [x] Modal/Drawer component
+* [x] Toast/error component
+* [x] Loading state
+* [x] Empty state
 
 ### Test
 
