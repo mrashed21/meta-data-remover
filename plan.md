@@ -414,18 +414,18 @@ compare করতে হবে। ✅ PASSED — Added percentage logic, verifie
 
 ### Tasks
 
-* [ ] MP4
-* [ ] MOV
-* [ ] WebM
-* [ ] MKV
-* [ ] Metadata inspection
-* [ ] Metadata removal
-* [ ] Video stream preservation
-* [ ] Audio stream preservation
-* [ ] Duration preservation
-* [ ] Resolution preservation
-* [ ] Codec detection
-* [ ] Optional optimization
+* [x] MP4
+* [x] MOV
+* [x] WebM
+* [x] MKV
+* [x] Metadata inspection
+* [x] Metadata removal
+* [x] Video stream preservation
+* [x] Audio stream preservation
+* [x] Duration preservation
+* [x] Resolution preservation
+* [x] Codec detection
+* [x] Optional optimization
 
 ### Critical Rule
 

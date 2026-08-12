@@ -137,7 +137,20 @@ export default function Home() {
         let processedBlob: Blob;
         let metadataAfter: MetadataField[];
 
-        if (options.mode === "fast") {
+        if (imageFile.mediaType === "video" || imageFile.mediaType === "audio") {
+          // Dynamically load ffmpeg to avoid impacting bundle size for image-only users
+          const { processVideoFFmpeg } = await import("@/lib/ffmpeg-processor");
+          
+          const result = await processVideoFFmpeg(imageFile as any, options, (prog) => {
+            setFiles((prev) =>
+              prev.map((f) =>
+                f.id === imageFile.id ? { ...f, progress: prog } : f
+              )
+            );
+          });
+          processedBlob = result.blob;
+          metadataAfter = result.metadataAfter;
+        } else if (options.mode === "fast") {
           // Client-side Canvas processing
           setFiles((prev) =>
             prev.map((f) =>

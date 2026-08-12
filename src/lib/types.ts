@@ -41,6 +41,7 @@ export interface CropData {
 export interface ImageFile {
   id: string;
   file: File;
+  mediaType: MediaType;
   preview: string;
   status: FileStatus;
   progress: number;
