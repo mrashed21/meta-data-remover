@@ -274,30 +274,32 @@ Mobile + desktop navigation ✅ PASSED
 
 ### Tasks
 
-* [ ] Drag & drop
-* [ ] File picker
-* [ ] Multiple files
-* [ ] Image validation
-* [ ] Video validation
-* [ ] Audio validation
-* [ ] File size validation
-* [ ] Duplicate file handling
-* [ ] Invalid file error
-* [ ] Remove file
-* [ ] Clear all
+* [x] Drag & drop
+* [x] File picker
+* [x] Multiple files
+* [x] Image validation
+* [x] Video validation
+* [x] Audio validation
+* [x] File size validation
+* [x] Duplicate file handling
+* [x] Invalid file error
+* [x] Remove file
+* [x] Clear all
 
 ### Test Cases
 
 ```text
-1 image
-1 video
-1 audio
-multiple files
-unsupported file
-0-byte file
-large file
-duplicate file
+1 image ✅
+1 video ✅
+1 audio ✅
+multiple files ✅
+unsupported file ✅
+0-byte file ✅
+large file ✅
+duplicate file ✅
 ```
+
+**Gate:** ✅ PASSED — npm run lint & build
 
 ---
 

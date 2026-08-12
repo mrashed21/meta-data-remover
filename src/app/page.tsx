@@ -6,7 +6,7 @@ import JSZip from "jszip";
 import { Sparkles, ArrowDown, Shield, Zap, BrainCircuit } from "lucide-react";
 
 import { Header } from "@/components/header";
-import { ImageUploader } from "@/components/image-uploader";
+import { UniversalUploader } from "@/components/universal-uploader";
 import { ControlPanel } from "@/components/control-panel";
 import { MetadataInspector } from "@/components/metadata-inspector";
 import { CompareSlider } from "@/components/compare-slider";
@@ -47,15 +47,17 @@ export default function Home() {
   // Abort controller for cancellation
   const abortRef = useRef<AbortController | null>(null);
 
-  // Handle file additions
   const handleFilesAdded = useCallback(async (newFiles: File[]) => {
-    const imageFiles: ImageFile[] = await Promise.all(
+    // Dynamically import getMediaType to avoid top-level issues if not imported yet
+    const { getMediaType } = await import("@/lib/media-types");
+    const imageFiles = await Promise.all(
       newFiles.map(async (file) => {
         const preview = URL.createObjectURL(file);
         const metadataBefore = await extractMetadata(file);
         return {
           id: generateId(),
           file,
+          mediaType: getMediaType(file) || "image",
           preview,
           status: "queued" as const,
           progress: 0,
@@ -66,7 +68,7 @@ export default function Home() {
         };
       })
     );
-    setFiles((prev) => [...prev, ...imageFiles]);
+    setFiles((prev) => [...prev, ...imageFiles as any]);
   }, []);
 
   // Handle file removal
@@ -78,6 +80,16 @@ export default function Home() {
         if (file.processedPreview) URL.revokeObjectURL(file.processedPreview);
       }
       return prev.filter((f) => f.id !== id);
+    });
+  }, []);
+
+  const handleClearAll = useCallback(() => {
+    setFiles((prev) => {
+      prev.forEach((file) => {
+        URL.revokeObjectURL(file.preview);
+        if (file.processedPreview) URL.revokeObjectURL(file.processedPreview);
+      });
+      return [];
     });
   }, []);
 
@@ -493,10 +505,11 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <ImageUploader
-                files={files}
+              <UniversalUploader
+                files={files as any} // Cast temporarily until full pipeline migration in Sprint 05/06
                 onFilesAdded={handleFilesAdded}
                 onFileRemove={handleFileRemove}
+                onClearAll={handleClearAll}
                 onFileEdit={handleFileEdit}
                 disabled={isProcessing}
               />
