@@ -702,29 +702,18 @@ Metadata Removed
 
 # SPRINT 17 — Homepage Content
 
-Homepage sections:
+* [x] Hero
+* [x] Upload Tool
+* [x] Supported Media
+* [x] How It Works
+* [x] Features
+* [x] Privacy
+* [x] FAQ
+* [x] About Muhammad Rashed
+* [x] Social / Developer Links
+* [x] Footer
 
-```text
-Hero
-↓
-Upload Tool
-↓
-Supported Media
-↓
-How It Works
-↓
-Features
-↓
-Privacy
-↓
-FAQ
-↓
-About Muhammad Rashed
-↓
-Social / Developer Links
-↓
-Footer
-```
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 
@@ -753,13 +742,13 @@ developer tools and privacy-focused utilities.
 Links:
 
 ```text
-GitHub
-Website
-LinkedIn
-Facebook
+* [x] GitHub
+* [x] Website
+* [x] LinkedIn
+* [x] Facebook
 ```
 
-**Actual URLs তোমার কাছ থেকে নিয়ে configure করতে হবে। Guess করা যাবে না।**
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 

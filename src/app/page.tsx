@@ -8,6 +8,7 @@ import { Sparkles, ArrowDown, Shield, Zap, BrainCircuit } from "lucide-react";
 import { Header } from "@/components/header";
 import { UniversalUploader } from "@/components/universal-uploader";
 import { ControlPanel } from "@/components/control-panel";
+import { LandingSections } from "@/components/landing-sections";
 import { MetadataInspector } from "@/components/metadata-inspector";
 import { CompareSlider } from "@/components/compare-slider";
 import { FileQueue } from "@/components/file-queue";
@@ -541,11 +542,14 @@ export default function Home() {
                 className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-widest mt-8"
               >
                 <span>Supported Formats:</span>
-                <span className="text-foreground">JPG, PNG, WebP</span>
+                <span className="text-foreground">JPG, PNG, WebP, MP4, MP3</span>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Landing Sections (Marketing / SEO) */}
+        {files.length === 0 && <LandingSections />}
 
         {/* Main layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
