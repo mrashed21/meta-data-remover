@@ -155,7 +155,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 
 ### Tasks
 
-* [ ] Processing architecture define
+* [x] Processing architecture define
 * [ ] Shared types create
 * [ ] File validation utility
 * [ ] Error handling strategy
@@ -173,6 +173,47 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * Production build
 
 **Gate:** সব pass না করলে Sprint 02 নয়।
+
+### Sprint 01 Task 1 Progress Record
+
+```
+Task: Processing architecture define
+Status: COMPLETE
+
+Files Changed:
+  - src/lib/types.ts (EXTENDED — added 14 new types)
+  - next.config.ts (FIXED — removed invalid eslint key for Next.js 16)
+
+Implementation:
+  Added to types.ts (all existing types preserved):
+  - MediaType = "image" | "video" | "audio"
+  - PrivacyMode = "privacy-clean" | "clean-branding"
+  - BrandingConfig (creator, author, software, keywords)
+  - MetadataStats (fields found/removed, sizes, saved%)
+  - ProcessingResult (blob, mimeType, filename, metadataAfter, stats)
+  - MediaFile (unified queue item for Sprint 04+)
+  - ImageProcessingOptions (extended image settings for Sprint 06/12)
+  - VideoProcessingOptions (remux-first strategy for Sprint 08)
+  - AudioProcessingOptions (ID3 tag control for Sprint 09)
+  - VideoMetadata (duration, resolution, fps, codecs)
+  - AudioMetadata (duration, bitrate, sample rate, ID3 tags)
+  - SupportedMimeType (MIME registry interface)
+  - ProcessingErrorCode (typed error enum)
+  - ProcessingError (user-friendly + technical error fields)
+
+Tests:
+  - npm run lint: PASSED (0 errors, 0 warnings)
+  - npm run build: PASSED (TypeScript OK, all pages OK)
+
+Test Results:
+  PASS — no regressions, all existing components still compile
+
+Issues Found:
+  - eslint key in next.config.ts no longer valid in Next.js 16
+
+Issues Fixed:
+  - next.config.ts — removed eslint block (invalid NextConfig key in v16)
+```
 
 ---
 
