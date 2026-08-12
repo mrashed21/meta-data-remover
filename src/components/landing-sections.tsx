@@ -7,6 +7,7 @@ import {
   Globe,
   Image as ImageIcon,
   Lock,
+  Mail,
   Server,
   ShieldCheck,
   Trash2,
@@ -230,67 +231,93 @@ export function LandingSections() {
       </section>
 
       {/* ─── ABOUT & DEVELOPER LINKS ─── */}
-      <section className="space-y-10 max-w-4xl mx-auto w-full text-center pb-10">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-2">
-          <Code2 className="w-8 h-8 text-primary" />
-        </div>
-        <div className="space-y-4">
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-            Muhammad Rashed
-          </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto mb-4">
-            Full Stack Developer building modern web applications, developer
-            tools, and privacy-focused utilities from Bangladesh.
-          </p>
-          <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mx-auto mb-6">
-            ZeroMeta is built to give power back to the user. In an era where AI
-            companies scrape the internet for training data and social networks
-            track every EXIF coordinate, we provide a mathematically secure way
-            to strip your files of hidden trackers.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
-          <a
-            href="https://github.com/mrashed21"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-medium"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4"
-            >
-              <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-              <path d="M9 18c-4.51 2-5-2-7-2"></path>
-            </svg>
-            GitHub
-          </a>
-          <a
-            href="https://linkedin.com/in/mrashed21"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-medium"
-          >
-            <Globe className="w-4 h-4" />
-            LinkedIn
-          </a>
-          <a
-            href="https://facebook.com/mrasheed21"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border bg-card hover:bg-muted transition-colors text-sm font-medium"
-          >
-            <Globe className="w-4 h-4" />
-            Facebook
-          </a>
-        </div>
+      <section className="max-w-4xl mx-auto w-full pb-10 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative rounded-3xl overflow-hidden border border-border/50 bg-card/30 backdrop-blur-sm p-8 sm:p-12 shadow-2xl"
+        >
+          {/* Decorative gradients */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner mb-2">
+              <Code2 className="w-10 h-10 text-primary" />
+            </div>
+            
+            <div className="space-y-4">
+              <h2 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                Muhammad Rashed
+              </h2>
+              <p className="text-lg text-primary font-medium max-w-lg mx-auto">
+                Full Stack Developer building modern web applications, developer
+                tools, and privacy-focused utilities from Bangladesh.
+              </p>
+              <p className="text-muted-foreground text-base leading-relaxed max-w-2xl mx-auto">
+                ZeroMeta is built to give power back to the user. In an era where AI
+                companies scrape the internet for training data and social networks
+                track every EXIF coordinate, we provide a mathematically secure way
+                to strip your files of hidden trackers.
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-6 w-full">
+              <a
+                href="mailto:rashedjaman768@gmail.com?subject=ZeroMeta%20Feedback"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
+              >
+                <Mail className="w-4 h-4" />
+                Email
+              </a>
+              <a
+                href="https://wa.me/@mrashed21"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+                </svg>
+                WhatsApp
+              </a>
+              <a
+                href="https://github.com/mrashed21"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-foreground hover:text-background hover:border-foreground transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                </svg>
+                GitHub
+              </a>
+              <a
+                href="https://linkedin.com/in/mrashed21"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-[#0077B5] hover:text-white hover:border-[#0077B5] transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
+              >
+                <Globe className="w-4 h-4" />
+                LinkedIn
+              </a>
+              <a
+                href="https://facebook.com/mrasheed21"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border bg-card hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all duration-300 text-sm font-semibold shadow-sm hover:shadow-md"
+              >
+                <Globe className="w-4 h-4" />
+                Facebook
+              </a>
+            </div>
+          </div>
+        </motion.div>
       </section>
     </div>
   );
