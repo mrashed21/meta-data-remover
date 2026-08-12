@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useRef } from "react";
+import { motion } from "motion/react";
 import ReactCrop, { type Crop, type PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import {
@@ -33,47 +33,44 @@ export function LivePreviewEditor({
   onOpenChange,
   onSave,
 }: LivePreviewEditorProps) {
-  const [crop, setCrop] = useState<Crop>();
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-  const [resizeWidth, setResizeWidth] = useState<string>("");
-  const [resizeHeight, setResizeHeight] = useState<string>("");
-  const [maintainAspect, setMaintainAspect] = useState(true);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  // Reset state when a new image is loaded
-  useEffect(() => {
-    if (image) {
-      if (image.cropData) {
-        setCrop({
-          unit: "px",
-          x: image.cropData.x,
-          y: image.cropData.y,
-          width: image.cropData.width,
-          height: image.cropData.height,
-        });
-        setCompletedCrop({
-          unit: "px",
-          x: image.cropData.x,
-          y: image.cropData.y,
-          width: image.cropData.width,
-          height: image.cropData.height,
-        });
-      } else {
-        setCrop(undefined);
-        setCompletedCrop(undefined);
-      }
-
-      if (image.customResize) {
-        setResizeWidth(image.customResize.width?.toString() || "");
-        setResizeHeight(image.customResize.height?.toString() || "");
-        setMaintainAspect(image.customResize.maintainAspectRatio);
-      } else {
-        setResizeWidth("");
-        setResizeHeight("");
-        setMaintainAspect(true);
-      }
+  // State is initialized from the image prop at mount.
+  // The parent remounts this component via a key prop when the image changes,
+  // so lazy initializers correctly capture the current image without needing
+  // a useEffect+setState pattern (which triggers cascading re-renders).
+  const [crop, setCrop] = useState<Crop>(() => {
+    if (image?.cropData) {
+      return {
+        unit: "px",
+        x: image.cropData.x,
+        y: image.cropData.y,
+        width: image.cropData.width,
+        height: image.cropData.height,
+      };
     }
-  }, [image]);
+    return undefined as unknown as Crop;
+  });
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>(() => {
+    if (image?.cropData) {
+      return {
+        unit: "px",
+        x: image.cropData.x,
+        y: image.cropData.y,
+        width: image.cropData.width,
+        height: image.cropData.height,
+      };
+    }
+    return undefined as unknown as PixelCrop;
+  });
+  const [resizeWidth, setResizeWidth] = useState<string>(
+    image?.customResize?.width?.toString() ?? ""
+  );
+  const [resizeHeight, setResizeHeight] = useState<string>(
+    image?.customResize?.height?.toString() ?? ""
+  );
+  const [maintainAspect, setMaintainAspect] = useState(
+    image?.customResize?.maintainAspectRatio ?? true
+  );
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const handleWidthChange = (val: string) => {
     setResizeWidth(val);

@@ -595,6 +595,7 @@ export default function Home() {
       />
 
       <LivePreviewEditor
+        key={editingImageId ?? "no-image"}
         open={editingImageId !== null}
         onOpenChange={(open) => !open && setEditingImageId(null)}
         image={files.find((f) => f.id === editingImageId) || null}

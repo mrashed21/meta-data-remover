@@ -18,7 +18,21 @@ export function CompareSlider({
 }: CompareSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track container width via ResizeObserver to avoid ref access during render
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const handleMove = useCallback(
     (clientX: number) => {
@@ -129,9 +143,7 @@ export function CompareSlider({
             alt="Original"
             className="absolute inset-0 w-full h-full object-contain"
             style={{
-              width: containerRef.current
-                ? `${containerRef.current.offsetWidth}px`
-                : "100%",
+              width: containerWidth > 0 ? `${containerWidth}px` : "100%",
               maxWidth: "none",
             }}
             draggable={false}
