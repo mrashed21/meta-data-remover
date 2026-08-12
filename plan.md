@@ -162,7 +162,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] Processing status model
 * [x] Download utility
 * [x] Filename generator
-* [ ] Metadata configuration
+* [x] Metadata configuration
 * [ ] Environment variables cleanup
 * [ ] Constants structure
 
