@@ -79,10 +79,13 @@ export function ControlPanel({
             <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Processing Mode
             </Label>
-            <div className="grid gap-2">
+            <div className="grid gap-2" role="radiogroup" aria-label="Processing Mode">
               <button
+                type="button"
+                role="radio"
+                aria-checked={options.privacyMode === "privacy-clean"}
                 onClick={() => updatePrivacyMode("privacy-clean")}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left ${
+                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   options.privacyMode === "privacy-clean"
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card/50 text-muted-foreground hover:border-zinc-600 hover:text-foreground"
@@ -100,8 +103,11 @@ export function ControlPanel({
               </button>
 
               <button
+                type="button"
+                role="radio"
+                aria-checked={options.privacyMode === "clean-branding"}
                 onClick={() => updatePrivacyMode("clean-branding")}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left ${
+                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   options.privacyMode === "clean-branding"
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card/50 text-muted-foreground hover:border-zinc-600 hover:text-foreground"
@@ -223,21 +229,31 @@ function ChecklistItem({
   interactive?: boolean;
   onChange?: () => void;
 }) {
+  const Component = interactive ? "button" : "div";
   return (
-    <div 
-      className={`flex items-center gap-2.5 text-sm ${interactive ? "cursor-pointer select-none group" : "opacity-80"}`}
+    <Component
+      type={interactive ? "button" : undefined}
+      role={interactive ? "checkbox" : undefined}
+      aria-checked={interactive ? checked : undefined}
+      aria-disabled={!interactive}
       onClick={interactive ? onChange : undefined}
+      className={`flex items-center gap-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm w-full text-left ${
+        interactive ? "cursor-pointer select-none group" : "opacity-80"
+      }`}
     >
-      <div className={`flex items-center justify-center w-4 h-4 rounded-sm border transition-colors ${
-        checked 
-          ? "bg-primary border-primary text-primary-foreground" 
-          : "border-muted-foreground/30 bg-transparent group-hover:border-muted-foreground/50"
-      }`}>
+      <div 
+        className={`flex items-center justify-center w-4 h-4 rounded-sm border transition-colors shrink-0 ${
+          checked 
+            ? "bg-primary border-primary text-primary-foreground" 
+            : "border-muted-foreground/30 bg-transparent group-hover:border-muted-foreground/50"
+        }`}
+        aria-hidden="true"
+      >
         {checked && <Check className="w-3 h-3 stroke-[3]" />}
       </div>
       <span className={checked ? "text-foreground font-medium" : "text-muted-foreground"}>
         {label}
       </span>
-    </div>
+    </Component>
   );
 }

@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ToastContextProvider } from "@/components/ui/toast";
+import { JsonLd } from "@/components/json-ld";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,10 @@ const jetbrainsMono = JetBrains_Mono({
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mrashed21.com'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default:  "mrashed21 — Media Metadata Remover",
     template: "%s | mrashed21",
@@ -88,6 +93,7 @@ export default function RootLayout({
       className={cn("dark", inter.variable, jetbrainsMono.variable)}
     >
       <body className="min-h-screen bg-background font-sans antialiased">
+        <JsonLd />
         {/* Ambient background — fixed, behind all content */}
         <div className="fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
           {/* Violet radial glow at top */}

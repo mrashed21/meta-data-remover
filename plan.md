@@ -756,31 +756,33 @@ Links:
 
 ### Tasks
 
-* [ ] Metadata
-* [ ] Title
-* [ ] Description
-* [ ] Canonical
-* [ ] OpenGraph
-* [ ] Twitter card
-* [ ] Sitemap
-* [ ] Robots
-* [ ] JSON-LD
-* [ ] Semantic headings
-* [ ] Image alt text
-* [ ] Internal links
-* [ ] Favicon
-* [ ] Manifest
+* [x] Metadata
+* [x] Title
+* [x] Description
+* [x] Canonical
+* [x] OpenGraph
+* [x] Twitter card
+* [x] Sitemap
+* [x] Robots
+* [x] JSON-LD
+* [x] Semantic headings
+* [x] Image alt text
+* [x] Internal links
+* [x] Favicon
+* [x] Manifest
 
 ### Structured Data
 
 Relevant হলে:
 
 ```text
-WebApplication
-Person
-Organization
-FAQPage
+* [x] WebApplication
+* [x] Person
+* [x] Organization
+* [x] FAQPage
 ```
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 
@@ -788,15 +790,17 @@ FAQPage
 
 ### Tasks
 
-* [ ] Keyboard navigation
-* [ ] Focus state
-* [ ] ARIA labels
-* [ ] Screen reader support
-* [ ] Color contrast
-* [ ] Error announcement
-* [ ] Upload button accessibility
-* [ ] Modal accessibility
-* [ ] Mobile touch target
+* [x] Keyboard navigation
+* [x] Focus state
+* [x] ARIA labels
+* [x] Screen reader support
+* [x] Color contrast
+* [x] Error announcement
+* [x] Upload button accessibility
+* [x] Modal accessibility
+* [x] Mobile touch target
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 
@@ -814,16 +818,17 @@ Target:
 
 ### Test
 
-* Navbar
-* Upload
-* File cards
-* Settings
-* Progress
-* Result
-* Download
-* Footer
+* [x] Navbar
+* [x] Upload
+* [x] File cards
+* [x] Settings
+* [x] Progress
+* [x] Result
+* [x] Download
+* [x] Footer
 
 **Horizontal overflow = 0**
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 

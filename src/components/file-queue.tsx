@@ -149,7 +149,7 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
                 </span>
               </>
             ) : isError ? (
-              <span className="text-xs text-destructive flex items-center gap-1">
+              <span className="text-xs text-destructive flex items-center gap-1" role="alert" aria-live="assertive">
                 {file.error || "Processing failed"}
               </span>
             ) : isDone ? (
