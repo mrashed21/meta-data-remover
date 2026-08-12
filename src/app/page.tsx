@@ -474,10 +474,18 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mb-6 inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-3 py-1 text-sm font-medium text-success"
+                className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium ${
+                  options.privacyMode === "clean-branding"
+                    ? "border-amber-500/30 bg-amber-500/10 text-amber-500"
+                    : "border-success/30 bg-success/10 text-success"
+                }`}
               >
                 <Shield className="w-4 h-4" />
-                <span>100% Private. Files never leave your device.</span>
+                <span>
+                  {options.privacyMode === "clean-branding"
+                    ? "Advanced Mode: Processed securely on our servers. Files deleted instantly."
+                    : "100% Private. Files never leave your device."}
+                </span>
               </motion.div>
 
               {/* Hero Heading */}
@@ -632,8 +640,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-xs text-zinc-500">
-              © {new Date().getFullYear()} CleanExif AI. All processing happens
-              securely. Fast Mode runs entirely in your browser.
+              © {new Date().getFullYear()} mrashed21 Media Processor. &quot;Privacy Clean&quot; mode processes files entirely in your browser. &quot;Clean + Branding&quot; securely injects EXIF on our stateless edge servers. No files are retained.
             </p>
             <div className="flex items-center gap-3">
               <Badge variant="outline" className="text-[10px]">

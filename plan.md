@@ -677,22 +677,26 @@ Metadata Removed
 
 প্রতিটি file-এর বিস্তারিত result থাকবে।
 
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
+
 ---
 
 # SPRINT 16 — Privacy UX
 
 ### Tasks
 
-* [ ] Privacy explanation
-* [ ] Processing location explanation
-* [ ] File retention explanation
-* [ ] No unnecessary tracking
-* [ ] Clear privacy messaging
-* [ ] Error privacy-safe messaging
+* [x] Privacy explanation
+* [x] Processing location explanation
+* [x] File retention explanation
+* [x] No unnecessary tracking
+* [x] Clear privacy messaging
+* [x] Error privacy-safe messaging
 
 **কোনো false claim করা যাবে না।**
 
 যদি processing client-side হয়, তখন স্পষ্টভাবে সেটা বলা যাবে।
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 

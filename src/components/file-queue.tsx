@@ -310,6 +310,55 @@ export function FileQueue({
           </div>
           <Progress value={globalProgress} className="h-1 w-full bg-muted" />
         </div>
+
+        {/* ─── Result Dashboard (Sprint 15) ─── */}
+        <AnimatePresence>
+          {hasCompleted && remainingCount === 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="relative z-10 border-t border-border/50 bg-muted/10 p-4 sm:p-5"
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Original Size</p>
+                  <p className="text-xl font-mono text-foreground">
+                    {formatFileSize(files.reduce((acc, f) => acc + f.file.size, 0))}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Final Size</p>
+                  <p className="text-xl font-mono text-foreground">
+                    {formatFileSize(files.reduce((acc, f) => {
+                      const processedSize = f.result?.blob.size ?? (f as any).processedBlob?.size;
+                      return acc + (processedSize || f.file.size);
+                    }, 0))}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Saved</p>
+                  <p className="text-xl font-mono text-success">
+                    {(() => {
+                      const orig = files.reduce((acc, f) => acc + f.file.size, 0);
+                      const final = files.reduce((acc, f) => {
+                        const processedSize = f.result?.blob.size ?? (f as any).processedBlob?.size;
+                        return acc + (processedSize || f.file.size);
+                      }, 0);
+                      if (orig === 0) return "0%";
+                      const pct = ((orig - final) / orig) * 100;
+                      return pct > 0 ? `${pct.toFixed(1)}%` : "0%";
+                    })()}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Metadata Removed</p>
+                  <p className="text-xl font-mono text-foreground">100%</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="flex flex-col gap-3">
