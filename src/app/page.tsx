@@ -139,9 +139,9 @@ export default function Home() {
 
         if (imageFile.mediaType === "video" || imageFile.mediaType === "audio") {
           // Dynamically load ffmpeg to avoid impacting bundle size for image-only users
-          const { processVideoFFmpeg } = await import("@/lib/ffmpeg-processor");
+          const { processMediaFFmpeg } = await import("@/lib/ffmpeg-processor");
           
-          const result = await processVideoFFmpeg(imageFile as any, options, (prog) => {
+          const result = await processMediaFFmpeg(imageFile as any, options, (prog) => {
             setFiles((prev) =>
               prev.map((f) =>
                 f.id === imageFile.id ? { ...f, progress: prog } : f

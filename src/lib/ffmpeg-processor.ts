@@ -44,10 +44,10 @@ async function toBlobURL(url: string, mimeType: string): Promise<string> {
 }
 
 /**
- * Processes a video file entirely in the browser using FFmpeg.wasm.
+ * Processes a video or audio file entirely in the browser using FFmpeg.wasm.
  * Strips all metadata by doing a direct stream copy (remuxing) to avoid re-encoding.
  */
-export async function processVideoFFmpeg(
+export async function processMediaFFmpeg(
   mediaFile: MediaFile,
   options: ProcessingOptions,
   onProgress?: (progress: number) => void
@@ -65,25 +65,34 @@ export async function processVideoFFmpeg(
 
   try {
     const file = mediaFile.file;
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'mp4';
+    const isAudio = mediaFile.mediaType === "audio";
+    const ext = file.name.split('.').pop()?.toLowerCase() || (isAudio ? 'mp3' : 'mp4');
     const inputName = `input.${ext}`;
     const outputName = `output.${ext}`;
 
     // 1. Write the user's file to FFmpeg's virtual file system
     await ffmpeg.writeFile(inputName, await fetchFile(file));
 
-    // 2. Run the FFmpeg command
-    // -map_metadata -1 : Strips all global metadata
-    // -c:v copy -c:a copy : Stream copies video and audio (NO re-encoding)
+    // 2. Build FFmpeg command arguments
+    // -map_metadata -1 : Strips all global metadata (ID3, MP4 atoms, etc)
     // -fflags +bitexact : Helps ensure no extraneous data is written
-    await ffmpeg.exec([
+    const args = [
       "-i", inputName,
       "-map_metadata", "-1",
-      "-c:v", "copy",
-      "-c:a", "copy",
-      "-fflags", "+bitexact",
-      outputName
-    ]);
+    ];
+
+    if (isAudio) {
+      // Audio only: copy audio stream, drop video (cover art)
+      args.push("-vn", "-c:a", "copy");
+    } else {
+      // Video: copy both streams
+      args.push("-c:v", "copy", "-c:a", "copy");
+    }
+
+    args.push("-fflags", "+bitexact", outputName);
+
+    // Run the FFmpeg command
+    await ffmpeg.exec(args);
 
     // 3. Read the result back from the virtual file system
     const data = await ffmpeg.readFile(outputName);
@@ -103,12 +112,18 @@ export async function processVideoFFmpeg(
       { key: "File Name", value: file.name, category: "other", stripped: false },
       { key: "File Size", value: `${(blob.size / (1024 * 1024)).toFixed(2)} MB`, category: "other", stripped: false },
       { key: "MIME Type", value: file.type, category: "other", stripped: false },
-      { key: "Video Stream", value: "Preserved (Stream Copy)", category: "other", stripped: false },
-      { key: "Audio Stream", value: "Preserved (Stream Copy)", category: "other", stripped: false },
-      { key: "Global Metadata", value: "Stripped ✓", category: "camera", stripped: true },
-      { key: "GPS / Location", value: "Stripped ✓", category: "location", stripped: true },
-      { key: "Title / Comments", value: "Stripped ✓", category: "other", stripped: true },
     ];
+
+    if (!isAudio) {
+      metadataAfter.push({ key: "Video Stream", value: "Preserved (Stream Copy)", category: "other", stripped: false });
+    }
+    
+    metadataAfter.push(
+      { key: "Audio Stream", value: "Preserved (Stream Copy)", category: "other", stripped: false },
+      { key: isAudio ? "ID3 Tags / Metadata" : "Global Metadata", value: "Stripped ✓", category: "camera", stripped: true },
+      { key: "Cover Art / Posters", value: "Stripped ✓", category: "other", stripped: true },
+      { key: "Title / Comments", value: "Stripped ✓", category: "other", stripped: true }
+    );
 
     return { blob, metadataAfter };
   } finally {
