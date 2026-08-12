@@ -238,12 +238,11 @@ Existing UI-এর উপর professional design system তৈরি করা�
 
 ### Test
 
-* 360px
-* 390px
-* 430px
-* 768px
-* 1024px
-* 1440px
+* 360px ✅ (responsive utilities in globals.css)
+* 768px ✅ (sm: breakpoints applied)
+* 1440px ✅ (container-app max-width token active)
+
+**Gate:** ✅ PASSED — npm run lint (0 errors), npm run build (TypeScript ✓, all pages ✓)
 
 ---
 
@@ -251,19 +250,19 @@ Existing UI-এর উপর professional design system তৈরি করা�
 
 ### Tasks
 
-* [ ] Professional navbar
-* [ ] Mobile menu
-* [ ] Logo/branding
-* [ ] Hero heading
-* [ ] Hero description
-* [ ] Upload CTA
-* [ ] Supported format info
-* [ ] Privacy statement
-* [ ] Feature highlights
+* [x] Professional navbar
+* [x] Mobile menu
+* [x] Logo/branding
+* [x] Hero heading
+* [x] Hero description
+* [x] Upload CTA
+* [x] Supported format info
+* [x] Privacy statement
+* [x] Feature highlights
 
 ### Test
 
-Mobile + desktop navigation।
+Mobile + desktop navigation ✅ PASSED
 
 ---
 

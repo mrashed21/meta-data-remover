@@ -410,70 +410,75 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center mb-8"
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-center text-center section-y mb-4"
             >
+              {/* Privacy Statement / Overline */}
               <motion.div
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-3 py-1 text-sm font-medium text-success"
               >
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-3 text-foreground">
-                  Strip. Clean. Protect.
-                </h2>
-                <p className="text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto mb-6">
-                  Remove EXIF metadata, C2PA manifests, SynthID watermarks, and
-                  AI fingerprints from your images — instantly in-browser or via
-                  advanced server processing.
-                </p>
+                <Shield className="w-4 h-4" />
+                <span>100% Private. Files never leave your device.</span>
               </motion.div>
 
-              {/* Feature badges */}
-              <div className="flex flex-wrap justify-center gap-3 mb-8">
-                {[
-                  {
-                    icon: Shield,
-                    label: "EXIF & GPS Stripping",
-                    color: "text-foreground",
-                  },
-                  {
-                    icon: Zap,
-                    label: "Instant Client-Side",
-                    color: "text-foreground",
-                  },
-                  {
-                    icon: BrainCircuit,
-                    label: "AI Watermark Bypass",
-                    color: "text-foreground",
-                  },
-                  {
-                    icon: Sparkles,
-                    label: "Batch + ZIP Export",
-                    color: "text-foreground",
-                  },
-                ].map((feature, i) => (
-                  <motion.div
-                    key={feature.label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
-                  >
-                    <Badge
-                      variant="outline"
-                      className="px-3 py-1.5 gap-1.5 text-xs border-border text-muted-foreground hover:text-foreground"
-                    >
-                      <feature.icon className={`w-3.5 h-3.5`} />
-                      {feature.label}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+              {/* Hero Heading */}
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-display max-w-4xl mb-6"
               >
-                <ArrowDown className="w-5 h-5 text-zinc-600 mx-auto" />
+                Strip Metadata. <br className="sm:hidden" />
+                <span className="gradient-text">Protect Your Privacy.</span>
+              </motion.h2>
+
+              {/* Hero Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-body-lg max-w-2xl text-muted-foreground mb-10"
+              >
+                Remove hidden EXIF data, GPS locations, C2PA manifests, and AI tracking watermarks from your media. Fast, secure, and entirely browser-based.
+              </motion.p>
+
+              {/* Feature Highlights */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-wrap items-center justify-center gap-4 mb-12"
+              >
+                {[
+                  { icon: Zap, label: "Instant Client-Side" },
+                  { icon: BrainCircuit, label: "AI Watermark Bypass" },
+                  { icon: Sparkles, label: "Batch Processing" },
+                ].map((feature, i) => (
+                  <div
+                    key={feature.label}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border shadow-sm"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[oklch(0.55_0.27_293/0.1)] flex items-center justify-center">
+                      <feature.icon className="w-4 h-4 text-[oklch(0.75_0.18_293)]" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{feature.label}</span>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Supported Format Info */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-widest mt-8"
+              >
+                <span>Supported Formats:</span>
+                <span className="text-foreground">JPG, PNG, WebP</span>
               </motion.div>
             </motion.div>
           )}

@@ -1,8 +1,17 @@
 "use client";
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Shield, Sparkles } from "lucide-react";
-import { motion } from "motion/react";
+import { Shield, Sparkles, Menu, FileImage, Lock, Settings } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent } from "motion/react";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerBody,
+} from "@/components/ui/drawer";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -25,51 +34,117 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function Header() {
+  const [isScrolled, setIsScrolled] = React.useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 20);
+  });
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-xl sticky top-0 z-50"
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-sm"
+          : "bg-transparent border-transparent"
+      }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shadow-sm">
-                <Shield className="w-5 h-5 text-foreground" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
+      <div className="container-app h-16 flex items-center justify-between">
+        {/* ─── Logo / Branding ────────────────────────────────────────────── */}
+        <div className="flex items-center gap-3">
+          <div className="relative group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[oklch(0.55_0.27_293)] to-[oklch(0.42_0.27_293)] flex items-center justify-center shadow-lg shadow-[oklch(0.55_0.27_293/0.3)] transition-transform duration-300 group-hover:scale-105">
+              <Shield className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-foreground">
-                CleanExif
-                <span className="text-muted-foreground font-normal ml-1">AI</span>
-              </h1>
-              <p className="text-[10px] text-zinc-500 -mt-0.5 hidden sm:block">
-                Metadata & Watermark Remover
-              </p>
-            </div>
+            {/* Pulsing indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-success border-2 border-background animate-pulse" />
           </div>
+          <div className="flex flex-col">
+            <h1 className="text-lg font-bold tracking-tight text-foreground leading-tight">
+              mrashed21
+              <span className="text-[oklch(0.65_0.22_293)] ml-1 font-semibold">Privacy</span>
+            </h1>
+            <p className="text-[10.5px] font-medium text-muted-foreground leading-none hidden sm:block uppercase tracking-widest mt-0.5">
+              Media Metadata Remover
+            </p>
+          </div>
+        </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted border border-border">
-              <Sparkles className="w-3.5 h-3.5 text-foreground" />
-              <span className="text-xs text-muted-foreground">AI-Powered</span>
+        {/* ─── Desktop Navigation ─────────────────────────────────────────── */}
+        <div className="hidden md:flex items-center gap-6">
+          <nav className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
+            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
+            <a href="#privacy" className="hover:text-foreground transition-colors flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5" /> Privacy first
+            </a>
+          </nav>
+          
+          <div className="w-px h-6 bg-border" />
+
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[oklch(0.55_0.27_293/0.1)] border border-[oklch(0.55_0.27_293/0.2)] text-[oklch(0.75_0.18_293)]">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">100% Client-Side</span>
             </div>
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="rounded-full">
               <a
-                href="https://github.com"
+                href="https://github.com/mrashed21/meta-data-remover"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="GitHub"
+                aria-label="GitHub Repository"
               >
-                <GithubIcon className="w-4 h-4 text-zinc-400" />
+                <GithubIcon className="w-5 h-5" />
               </a>
             </Button>
           </div>
+        </div>
+
+        {/* ─── Mobile Menu (Drawer) ───────────────────────────────────────── */}
+        <div className="md:hidden">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Open menu">
+                <Menu className="w-5 h-5" />
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent side="right">
+              <DrawerHeader>
+                <DrawerTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-brand" />
+                  Menu
+                </DrawerTitle>
+              </DrawerHeader>
+              <DrawerBody className="flex flex-col gap-4 py-4">
+                <nav className="flex flex-col gap-2">
+                  <a href="#features" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors">Features</a>
+                  <a href="#how-it-works" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors">How it works</a>
+                  <a href="#privacy" className="p-3 rounded-lg hover:bg-muted font-medium text-foreground transition-colors flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-muted-foreground" /> Privacy first
+                  </a>
+                </nav>
+                <div className="mt-auto pt-6 border-t border-border flex flex-col gap-4">
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-[oklch(0.55_0.27_293/0.1)] border border-[oklch(0.55_0.27_293/0.2)] text-[oklch(0.75_0.18_293)]">
+                    <Sparkles className="w-4 h-4" />
+                    <span className="text-sm font-semibold">100% Client-Side Processing</span>
+                  </div>
+                  <Button variant="outline" className="w-full justify-start gap-2" asChild>
+                    <a
+                      href="https://github.com/mrashed21/meta-data-remover"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <GithubIcon className="w-4 h-4" />
+                      View on GitHub
+                    </a>
+                  </Button>
+                </div>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
     </motion.header>
