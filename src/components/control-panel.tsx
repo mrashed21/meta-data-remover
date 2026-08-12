@@ -24,6 +24,7 @@ interface ControlPanelProps {
   options: ProcessingOptions;
   onOptionsChange: (options: ProcessingOptions) => void;
   onProcess: () => void;
+  onCancel?: () => void;
   isProcessing: boolean;
   fileCount: number;
 }
@@ -32,6 +33,7 @@ export function ControlPanel({
   options,
   onOptionsChange,
   onProcess,
+  onCancel,
   isProcessing,
   fileCount,
 }: ControlPanelProps) {
@@ -106,7 +108,7 @@ export function ControlPanel({
                 }`}
               >
                 {options.privacyMode === "clean-branding" ? (
-                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                  <Check className="w-5 h-5 shrink-0" />
                 ) : (
                   <Circle className="w-5 h-5 shrink-0" />
                 )}
@@ -182,25 +184,28 @@ export function ControlPanel({
           <Separator className="bg-border/50" />
 
           {/* Process Button */}
-          <Button
-            variant="default"
-            size="lg"
-            className="w-full h-12 text-sm font-semibold tracking-wide"
-            onClick={onProcess}
-            disabled={isProcessing || fileCount === 0}
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                PROCESSING...
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-2" fill="currentColor" />
-                PROCESS {fileCount > 0 ? `${fileCount} FILE${fileCount > 1 ? "S" : ""}` : ""}
-              </>
-            )}
-          </Button>
+          {isProcessing ? (
+            <Button
+              variant="destructive"
+              size="lg"
+              className="w-full h-12 text-sm font-semibold tracking-wide"
+              onClick={onCancel}
+            >
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              CANCEL PROCESSING
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full h-12 text-sm font-semibold tracking-wide"
+              onClick={onProcess}
+              disabled={fileCount === 0}
+            >
+              <Play className="w-4 h-4 mr-2" fill="currentColor" />
+              PROCESS {fileCount > 0 ? `${fileCount} FILE${fileCount > 1 ? "S" : ""}` : ""}
+            </Button>
+          )}
         </CardContent>
       </Card>
     </motion.div>

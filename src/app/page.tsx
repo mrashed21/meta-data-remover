@@ -352,6 +352,14 @@ export default function Home() {
     setIsProcessing(false);
   }, [files, options]);
 
+  // Cancel processing
+  const handleCancel = useCallback(() => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    setIsProcessing(false);
+  }, []);
+
   // Download a single file
   const handleDownload = useCallback(
     (id: string) => {
@@ -401,13 +409,20 @@ export default function Home() {
       const url = URL.createObjectURL(zipBlob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `cleanexif-ai-batch-${Date.now()}.zip`;
+      
+      // Use Sprint 11 compliant prefix for zip
+      const timeStr = new Date().toISOString().replace(/T/, '-').replace(/[:.]/g, '').slice(0, 15);
+      a.download = `mrashed21-batch-${timeStr}.zip`;
+      
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      
+      // Delay cleanup to ensure browser completes download initialization
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (err) {
       console.error("ZIP creation failed:", err);
+      alert("Failed to create ZIP file. Please try downloading files individually.");
     } finally {
       setIsZipping(false);
     }
@@ -599,6 +614,7 @@ export default function Home() {
                 options={options}
                 onOptionsChange={setOptions}
                 onProcess={handleProcess}
+                onCancel={handleCancel}
                 isProcessing={isProcessing}
                 fileCount={
                   files.filter(

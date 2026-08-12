@@ -599,15 +599,15 @@ Processing Mode
 
 ### Tasks
 
-* [ ] Global progress
-* [ ] Per-file progress
-* [ ] Processing state
-* [ ] Success state
-* [ ] Failed state
-* [ ] Retry
-* [ ] Cancel
-* [ ] Error message
-* [ ] Processing statistics
+* [x] Global progress
+* [x] Per-file progress
+* [x] Processing state
+* [x] Success state
+* [x] Failed state
+* [x] Retry
+* [x] Cancel
+* [x] Error message
+* [x] Processing statistics
 
 Example:
 
@@ -621,18 +621,20 @@ Example:
 11 Remaining
 ```
 
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
+
 ---
 
 # SPRINT 14 — Download System
 
 ### Tasks
 
-* [ ] Download single file
-* [ ] Download all
-* [ ] ZIP generation
-* [ ] Preserve filenames
-* [ ] ZIP error handling
-* [ ] Cleanup temporary resources
+* [x] Download single file
+* [x] Download all
+* [x] ZIP generation
+* [x] Preserve filenames
+* [x] ZIP error handling
+* [x] Cleanup temporary resources
 
 ### Test
 
@@ -643,6 +645,8 @@ Example:
 mixed media
 large files
 ```
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 

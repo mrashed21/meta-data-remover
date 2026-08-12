@@ -14,7 +14,8 @@ import {
   Eye,
   Download,
   Trash2,
-  FileText
+  FileText,
+  Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -218,41 +219,96 @@ export function FileQueue({
 }: FileQueueProps) {
   if (files.length === 0) return null;
 
-  const completedCount = files.filter(f => f.status === "done").length;
-  const isProcessing = files.some(f => f.status === "processing");
+  const totalFiles = files.length;
+  const completedCount = files.filter((f) => f.status === "done").length;
+  const failedCount = files.filter((f) => f.status === "error").length;
+  const processingCount = files.filter((f) => f.status === "processing").length;
+  const remainingCount = totalFiles - (completedCount + failedCount);
+  const globalProgress = totalFiles > 0 ? Math.round(((completedCount + failedCount) / totalFiles) * 100) : 0;
+  
+  const hasCompleted = completedCount > 0;
+  const isProcessing = processingCount > 0;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between border-b border-border pb-2">
-        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          File Queue
-          <Badge variant="secondary" className="font-mono">{files.length}</Badge>
-        </h3>
+      {/* Global Progress Header */}
+      <div className="bg-card border border-border rounded-xl p-4 sm:p-5 shadow-sm overflow-hidden relative">
+        {/* Subtle background progress fill */}
+        <div 
+          className="absolute inset-y-0 left-0 bg-primary/5 transition-all duration-300 ease-out z-0" 
+          style={{ width: `${globalProgress}%` }} 
+        />
         
-        <div className="flex items-center gap-2">
-          {completedCount > 1 && onDownloadAll && (
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isProcessing ? "bg-primary/10" : hasCompleted && remainingCount === 0 && failedCount === 0 ? "bg-success/10" : "bg-muted"}`}>
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              ) : hasCompleted && remainingCount === 0 && failedCount === 0 ? (
+                <CheckCircle2 className="w-5 h-5 text-success" />
+              ) : (
+                <Layers className="w-5 h-5 text-muted-foreground" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                {isProcessing ? "Processing..." : hasCompleted && remainingCount === 0 ? "Processing Complete" : "Ready to Process"}
+                <Badge variant="secondary" className="text-[10px] uppercase font-mono tracking-wider h-5">
+                  {completedCount + failedCount} / {totalFiles}
+                </Badge>
+              </h3>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1 font-medium">
+                {completedCount > 0 && <span className="flex items-center gap-1 text-success"><CheckCircle2 className="w-3.5 h-3.5" /> {completedCount} Success</span>}
+                {failedCount > 0 && <span className="flex items-center gap-1 text-destructive"><AlertCircle className="w-3.5 h-3.5" /> {failedCount} Failed</span>}
+                {remainingCount > 0 && <span className="flex items-center gap-1 opacity-70"><Clock className="w-3.5 h-3.5" /> {remainingCount} Remaining</span>}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-auto w-full sm:w-auto">
+            <div className="flex-1 sm:w-32 hidden sm:block">
+              <div className="flex justify-between text-[10px] text-muted-foreground font-mono mb-1.5 font-medium uppercase tracking-wider">
+                <span>Progress</span>
+                <span>{globalProgress}%</span>
+              </div>
+              <Progress value={globalProgress} className="h-1.5 w-full bg-muted" />
+            </div>
+
+            {hasCompleted && onDownloadAll && (
+              <Button
+                size="sm"
+                onClick={onDownloadAll}
+                disabled={isZipping}
+                className="gap-1.5 shrink-0 bg-success hover:bg-success/90 text-success-foreground h-9 shadow-sm"
+              >
+                {isZipping ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                {isZipping ? "Zipping..." : "Save All ZIP"}
+              </Button>
+            )}
+            
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              onClick={onDownloadAll}
-              disabled={isZipping}
-              className="gap-1.5 h-8 text-xs"
-            >
-              {isZipping ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-              {isZipping ? "Zipping..." : "Download All ZIP"}
-            </Button>
-          )}
-          {files.length > 1 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClearAll} 
+              onClick={onClearAll}
               disabled={isProcessing}
-              className="text-xs text-muted-foreground hover:text-destructive h-8"
+              className="h-9 text-xs text-muted-foreground hover:text-destructive hidden sm:flex"
             >
-              Clear Queue
+              Clear
             </Button>
-          )}
+          </div>
+        </div>
+        
+        {/* Mobile progress bar */}
+        <div className="sm:hidden mt-4 relative z-10">
+          <div className="flex justify-between text-[10px] text-muted-foreground font-mono mb-1 font-medium uppercase tracking-wider">
+             <span>Progress</span>
+             <span>{globalProgress}%</span>
+          </div>
+          <Progress value={globalProgress} className="h-1 w-full bg-muted" />
         </div>
       </div>
 
