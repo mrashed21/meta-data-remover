@@ -384,15 +384,15 @@ Output অবশ্যই:
 
 ### Tasks
 
-* [ ] Preserve dimensions mode
-* [ ] Quality preservation
-* [ ] Optional compression
-* [ ] Before size
-* [ ] After size
-* [ ] Saved percentage
-* [ ] Quality comparison
-* [ ] Don't enlarge small images
-* [ ] Don't accidentally downscale
+* [x] Preserve dimensions mode
+* [x] Quality preservation
+* [x] Optional compression
+* [x] Before size
+* [x] After size
+* [x] Saved percentage
+* [x] Quality comparison
+* [x] Don't enlarge small images
+* [x] Don't accidentally downscale
 
 ### Test
 
@@ -404,7 +404,9 @@ Processed
 Optimized
 ```
 
-compare করতে হবে।
+compare করতে হবে। ✅ PASSED — Added percentage logic, verified dimension protections.
+
+**Gate:** ✅ PASSED — npm run lint & build
 
 ---
 

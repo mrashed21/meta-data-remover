@@ -116,8 +116,12 @@ function FileCard({ file, onRemove, onInspect, onDownload }: FileCardProps) {
               {isDone && processedSize && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-border" />
-                  <span className="text-success font-medium flex items-center gap-1">
+                  <span className={`font-medium flex items-center gap-1 ${processedSize < file.file.size ? "text-success" : "text-amber-500"}`}>
                     {formatFileSize(processedSize)}
+                    <span className="text-[10px] ml-1">
+                      ({processedSize < file.file.size ? "-" : "+"}
+                      {Math.abs(Math.round(((file.file.size - processedSize) / file.file.size) * 100))}%)
+                    </span>
                   </span>
                 </>
               )}
