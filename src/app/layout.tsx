@@ -39,16 +39,29 @@ export const metadata: Metadata = {
   creator: "Muhammad Rashed",
   publisher: "ZeroMeta",
   manifest: "/manifest.json",
-  icons: [
-    { rel: "icon", url: "/icon-192.png", sizes: "192x192" },
-    { rel: "apple-touch-icon", url: "/icon-512.png" },
-  ],
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
   openGraph: {
     type: "website",
     title: "ZeroMeta — Secure Media Processing",
     description:
       "Remove EXIF metadata and AI watermarks from your images completely offline. Fast, private, seamless.",
     siteName: "ZeroMeta",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "ZeroMeta Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -56,6 +69,7 @@ export const metadata: Metadata = {
     description:
       "Instantly strip metadata from your photos and videos completely locally.",
     creator: "@mrashed21",
+    images: ["/icon-512.png"],
   },
   robots: {
     index: true,

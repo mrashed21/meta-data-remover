@@ -4,6 +4,8 @@ import JSZip from "jszip";
 import {
   BrainCircuit,
   Image as ImageIcon,
+  Mail,
+  MessageCircle,
   Music,
   Shield,
   Sparkles,
@@ -685,6 +687,37 @@ export default function Home() {
                     onFileEdit={handleFileEdit}
                     disabled={isProcessing}
                   />
+                </motion.div>
+
+                {/* Feedback Section */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="p-6 rounded-2xl surface shadow-sm border border-border/50 flex flex-col md:flex-row items-center justify-between gap-6"
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">Feedback & Support</h3>
+                    <p className="text-sm text-muted-foreground">Have questions or suggestions? Let us know!</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <a
+                      href="mailto:rashedjaman768@gmail.com?subject=ZeroMeta%20Feedback"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium shadow-sm"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Email Us
+                    </a>
+                    <a
+                      href="https://wa.me/@mrashed21"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-sm font-medium shadow-sm"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp
+                    </a>
+                  </div>
                 </motion.div>
 
                 {/* File Queue */}
