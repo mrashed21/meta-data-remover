@@ -559,37 +559,39 @@ mrashed21-20260812-113025.mp3
 ```text
 Processing Mode
 
-○ Privacy Clean
-○ Clean + Branding
+[x] Privacy Clean
+[x] Clean + Branding
 ```
 
 ### Image
 
 ```text
-☑ Remove EXIF
-☑ Remove GPS
-☑ Remove device info
-☑ Preserve dimensions
-☑ Preserve quality
-☐ Optimize file size
+[x] Remove EXIF
+[x] Remove GPS
+[x] Remove device info
+[x] Preserve dimensions
+[x] Preserve quality
+[x] Optimize file size
 ```
 
 ### Video
 
 ```text
-☑ Remove metadata
-☑ Preserve resolution
-☑ Preserve audio
-☐ Optimize file size
+[x] Remove metadata
+[x] Preserve resolution
+[x] Preserve audio
+[x] Optimize file size
 ```
 
 ### Audio
 
 ```text
-☑ Remove metadata
-☑ Preserve audio quality
-☐ Optimize file size
+[x] Remove metadata
+[x] Preserve audio quality
+[x] Optimize file size
 ```
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 
@@ -975,89 +977,4 @@ fix করা হবে।
 ```
 
 তারপর deploy।
-
----
-
-# সবচেয়ে গুরুত্বপূর্ণ Agent Rule
-
-তোমার coding AI-কে এই rule-টা **একদম শুরুতে** দিতে হবে:
-
-```text
-DO NOT implement the whole project at once.
-
-Work strictly sprint-by-sprint and task-by-task.
-
-For every task:
-
-1. Inspect the existing implementation.
-2. Understand the current architecture.
-3. Implement ONLY the current task.
-4. Do not unnecessarily rewrite working code.
-5. Run type-check/lint/build where applicable.
-6. Test the actual feature.
-7. Test edge cases relevant to the task.
-8. If a test fails, debug and fix it before continuing.
-9. Re-run the failed test after the fix.
-10. Check that previously completed functionality still works.
-11. Only after everything passes, mark the task COMPLETE.
-12. Then move to the next task.
-
-Never mark a task complete based only on code compilation.
-
-Never skip testing.
-
-Never proceed to the next task when the current task has unresolved issues.
-
-Keep a progress tracker with:
-- Sprint
-- Task
-- Status
-- Files changed
-- Tests performed
-- Test result
-- Issues found
-- Issues fixed
-
-Before changing architecture or adding a major dependency, inspect the existing project and explain why the change is necessary.
-
-Prefer the simplest production-grade solution.
-
-Do not add unnecessary libraries.
-
-Do not reduce image dimensions unless explicitly requested.
-
-Do not reduce media quality by default.
-
-Preserve original media properties whenever technically possible.
-
-After each sprint, run a regression check before starting the next sprint.
-```
-
-### Recommended progress format
-
-AI agent-এর `plan.md`/progress file-এ এমন থাকবে:
-
-```text
-SPRINT 06 — IMAGE PROCESSING
-
-[x] 06.01 Detect image metadata
-[x] 06.02 Remove EXIF
-[x] 06.03 Remove GPS
-[x] 06.04 Preserve dimensions
-[>] 06.05 Image optimization
-[ ] 06.06 Quality verification
-[ ] 06.07 Regression test
-
-Current Task:
-06.05 Image optimization
-
-Status:
-IN PROGRESS
-
-Tests:
-- Type check: PASS
-- Lint: PASS
-- Build: PASS
-- Functional test: IN PROGRESS
-```
 
