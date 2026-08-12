@@ -161,7 +161,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] Error handling strategy
 * [x] Processing status model
 * [x] Download utility
-* [ ] Filename generator
+* [x] Filename generator
 * [ ] Metadata configuration
 * [ ] Environment variables cleanup
 * [ ] Constants structure
