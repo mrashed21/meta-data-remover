@@ -15,7 +15,7 @@ import { ShareButton } from "@/components/share-button";
 import { LivePreviewEditor } from "@/components/live-preview-editor";
 import { Badge } from "@/components/ui/badge";
 
-import { generateId } from "@/lib/utils";
+import { generateId, generateOutputFilename } from "@/lib/utils";
 import { DEFAULT_PROCESSING_OPTIONS, FORMAT_MIME } from "@/lib/constants";
 import { extractMetadata, processImageCanvas } from "@/lib/canvas-processor";
 import type {
@@ -309,6 +309,13 @@ export default function Home() {
 
         const processedPreview = URL.createObjectURL(processedBlob);
 
+        let targetExt: string = options.format;
+        if (imageFile.mediaType === "video" || imageFile.mediaType === "audio") {
+          targetExt = imageFile.file.name.split('.').pop() || "bin";
+        }
+        
+        const customName = generateOutputFilename(targetExt);
+
         setFiles((prev) =>
           prev.map((f) =>
             f.id === imageFile.id
@@ -319,6 +326,7 @@ export default function Home() {
                   processedBlob,
                   processedPreview,
                   metadataAfter,
+                  customName,
                 }
               : f
           )

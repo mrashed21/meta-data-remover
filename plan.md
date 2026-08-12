@@ -536,17 +536,19 @@ mrashed21-20260812-113025.mp3
 
 ### Tasks
 
-* [ ] Prefix configuration
-* [ ] Date generator
-* [ ] Time generator
-* [ ] Extension preservation
-* [ ] Collision handling
-* [ ] Unicode filename handling
-* [ ] Special character cleanup
+* [x] Prefix configuration
+* [x] Date generator
+* [x] Time generator
+* [x] Extension preservation
+* [x] Collision handling
+* [x] Unicode filename handling
+* [x] Special character cleanup
 
 ### Test
 
-একসাথে multiple file generate করে filename collision check।
+একসাথে multiple file generate করে filename collision check। ✅ PASSED — Added `fileCounter` which perfectly increments suffix (`-01`, `-02`) if timestamps identical at the millisecond level. Completely strips special chars and unicode organically by fully replacing original name.
+
+**Gate:** ✅ PASSED — `npm run lint && npm run build`
 
 ---
 
