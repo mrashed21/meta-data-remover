@@ -163,7 +163,7 @@ Project-কে clean এবং scalable structure-এ নেওয়া।
 * [x] Download utility
 * [x] Filename generator
 * [x] Metadata configuration
-* [ ] Environment variables cleanup
+* [x] Environment variables cleanup
 * [ ] Constants structure
 
 ### Test
